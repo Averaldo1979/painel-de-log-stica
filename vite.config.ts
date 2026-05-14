@@ -98,11 +98,14 @@ export default defineConfig(({ mode }) => {
           }
         })
       ],
+      // Expõe apenas as variáveis não-VITE_ manualmente.
+      // Variáveis VITE_* são injetadas automaticamente pelo Vite no import.meta.env.
       define: {
         'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
         'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-        'import.meta.env.VITE_SHEETS_API_URL': JSON.stringify(env.VITE_SHEETS_API_URL || '')
       },
+      // Prefixo explícito para variáveis de ambiente expostas ao cliente
+      envPrefix: ['VITE_'],
       resolve: {
         alias: {
           '@': path.resolve(__dirname, '.'),

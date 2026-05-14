@@ -7,12 +7,22 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependências
 node_modules
+
+# Build
 dist
 dist-ssr
-*.local
 
-# Editor directories and files
+# Ambiente local (NUNCA commitar — contém chaves secretas)
+.env
+.env.local
+.env.*.local
+
+# Cache do Vite
+.vite
+
+# Editor
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -22,3 +32,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# PWA gerado
+public/sw.js
+public/workbox-*.js
