@@ -1,0 +1,18 @@
+
+{
+  "name": "CargoBoard Logistics",
+  "short_name": "CargoBoard",
+  "description": "Painel de controle logístico e acompanhamento de cargas.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#eab308",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3063/3063822.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
