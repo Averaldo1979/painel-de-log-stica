@@ -36,3 +36,5 @@ dist-ssr
 # PWA gerado
 public/sw.js
 public/workbox-*.js
+
+.vercel
