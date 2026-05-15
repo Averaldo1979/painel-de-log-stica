@@ -97,6 +97,30 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
     }
   };
 
+  /**
+   * Converte datas nos formatos:
+   *  - "D/M/AA H:MM"  → exportação do Google Sheets (ex: 15/5/26 0:30)
+   *  - "YYYY-MM-DDTHH:mm" → formato ISO padrão
+   * Retorna string no formato YYYY-MM-DDTHH:mm compatível com <input datetime-local>.
+   */
+  const parseCsvDate = (raw: string): string => {
+    const trimmed = raw.trim();
+    // Formato Google Sheets: D/M/AA H:MM ou DD/MM/AA HH:MM
+    const sheetMatch = trimmed.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})\s+(\d{1,2}):(\d{2})$/);
+    if (sheetMatch) {
+      const day   = sheetMatch[1].padStart(2, '0');
+      const month = sheetMatch[2].padStart(2, '0');
+      const rawYear = parseInt(sheetMatch[3], 10);
+      const year  = rawYear < 100 ? 2000 + rawYear : rawYear;
+      const hour  = sheetMatch[4].padStart(2, '0');
+      const min   = sheetMatch[5];
+      return `${year}-${month}-${day}T${hour}:${min}`;
+    }
+    // Formato ISO (YYYY-MM-DDTHH:mm) — retorna como está
+    if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(trimmed)) return trimmed;
+    return trimmed; // fallback
+  };
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -107,43 +131,61 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
     reader.onload = (event) => {
       try {
         const text = event.target?.result as string;
-        // Divide as linhas e remove o caractere BOM se existir
+        // Remove BOM e divide linhas
         const lines = text.replace(/^\uFEFF/, "").split(/\r?\n/);
         const importedCargos: Omit<Cargo, 'id' | 'status'>[] = [];
         let errors = 0;
+
+        /**
+         * Divide uma linha CSV respeitando campos entre aspas
+         * (evita quebrar cidades/nomes que contenham vírgulas).
+         */
+        const splitCsvLine = (line: string, sep: string): string[] => {
+          const result: string[] = [];
+          let current = '';
+          let insideQuote = false;
+          for (let ci = 0; ci < line.length; ci++) {
+            const ch = line[ci];
+            if (ch === '"') { insideQuote = !insideQuote; continue; }
+            if (ch === sep && !insideQuote) { result.push(current.trim()); current = ''; continue; }
+            current += ch;
+          }
+          result.push(current.trim());
+          return result;
+        };
 
         // Itera as linhas pulando o cabeçalho
         for (let i = 1; i < lines.length; i++) {
           const line = lines[i].trim();
           if (!line) continue;
 
-          // Detecta se o separador é vírgula ou ponto-e-vírgula
+          // Detecta separador: ponto-e-vírgula tem prioridade sobre vírgula
           const separator = line.includes(';') ? ';' : ',';
-          const values = line.split(separator).map(v => v.trim().replace(/^"|"$/g, ''));
+          const values = splitCsvLine(line, separator);
           
           if (values.length >= 6) {
             /** 
              * Ordem esperada no CSV:
-             * 0: Nº Carga (ID Logístico) — Ex: 10442
-             * 1: Equipe (Ex: 001)
-             * 2: Integrado
-             * 3: Cidade
-             * 4: Hora Apanha (Formato: YYYY-MM-DDTHH:mm)
-             * 5: Numero Aves
-             * 6: Total Carga (Kg)
-             * 7: Unidade (Opcional - Nome)
-             * 8: Hora Abate (Formato: YYYY-MM-DDTHH:mm)
+             * 0: Nº Carga (ID Logístico) — Ex: 1
+             * 1: Equipe                  — Ex: 401
+             * 2: Integrado               — Ex: Luziane Godoy Ribeiro av2
+             * 3: Cidade                  — Ex: Itapejara D' Oeste
+             * 4: Hora Apanha             — Ex: 15/5/26 0:30  OU  2026-05-15T00:30
+             * 5: Numero Aves             — Ex: 7020
+             * 6: Total Carga (Kg)        — Ex: 9266
+             * 7: Unidade                 — Ex: FRG-IO  (opcional)
+             * 8: Hora Abate              — Ex: 15/5/26 5:10  OU  2026-05-15T05:10
              */
 
-            const cargoNum = values[0] || (Math.floor(Math.random() * 90000) + 10000).toString();
-            const teamNum = values[1];
+            const cargoNum   = values[0] || (Math.floor(Math.random() * 90000) + 10000).toString();
+            const teamNum    = values[1];
             const integrated = values[2];
-            const city = values[3];
-            const pickup = values[4];
-            const birds = parseInt(values[5]) || 0;
-            const load = parseInt(values[6]) || 0;
-            const unitName = values[7] || '';
-            const slaughter = values[8] || pickup; // Fallback para pickup se não houver abate
+            const city       = values[3];
+            const pickup     = parseCsvDate(values[4]);
+            const birds      = parseInt(values[5].replace(/\D/g, '')) || 0;
+            const load       = parseInt(values[6].replace(/\D/g, '')) || 0;
+            const unitName   = values[7] || '';
+            const slaughter  = values[8] ? parseCsvDate(values[8]) : pickup;
 
             // Busca a equipe exata
             const team = teams.find(t => 
@@ -195,7 +237,7 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
 
   const downloadTemplate = () => {
     const header = "Nº Carga (ID Logístico),Equipe,Integrado,Cidade,Hora Apanha,Numero Aves,Total Carga,Unidade,Hora Abate\n";
-    const example = "10442,001,Produtor Exemplo,Cidade Exemplo,2024-05-20T08:00,5000,12500,UNIDADE A,2024-05-20T14:30";
+    const example = "1,401,Produtor Exemplo,Cidade Exemplo,15/5/26 8:00,5000,12500,UNIDADE A,15/5/26 14:30";
     const blob = new Blob(["\uFEFF" + header + example], { type: 'text/csv;charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
