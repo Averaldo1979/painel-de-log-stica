@@ -70,7 +70,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, view, setView, onReset
   const navItems = (!users?.length && !currentUser) ? allNavItems : permittedNavItems;
 
   return (
-    <div className="min-h-screen flex bg-[#020617] text-slate-200 selection:bg-yellow-500 selection:text-slate-900">
+    <div className="min-h-screen flex bg-[#020617] text-slate-200 selection:bg-yellow-500 selection:text-slate-900 pb-16 lg:pb-0">
       {view === 'TV_PANEL' ? (
         <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden relative">
           <div className="absolute top-4 left-4 z-50">
@@ -187,18 +187,19 @@ export const Layout: React.FC<LayoutProps> = ({ children, view, setView, onReset
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-        <header className="h-20 bg-[#020617]/95 backdrop-blur-2xl border-b border-slate-800 px-8 flex items-center justify-between sticky top-0 z-30 shadow-2xl">
-          <div className="flex items-center gap-8">
-            <button className="lg:hidden p-3 text-slate-400 hover:text-white bg-slate-900 rounded-xl border border-slate-800" onClick={() => setIsSidebarOpen(true)}>
-              <Menu size={22} />
+        <header className="h-16 md:h-20 bg-[#020617]/95 backdrop-blur-2xl border-b border-slate-800 px-4 md:px-8 flex items-center justify-between sticky top-0 z-30 shadow-2xl">
+          <div className="flex items-center gap-3 md:gap-8">
+            <button className="lg:hidden p-2.5 text-slate-400 hover:text-white bg-slate-900 rounded-xl border border-slate-800" onClick={() => setIsSidebarOpen(true)}>
+              <Menu size={20} />
             </button>
-            <div className="hidden sm:flex flex-col">
-              <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">
-                <Radio size={12} className="text-emerald-500" />
-                <span>Torre de Controle Logística</span>
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.3em] text-slate-500">
+                <Radio size={10} className="text-emerald-500" />
+                <span className="hidden sm:inline">Torre de Controle Logística</span>
+                <span className="sm:hidden">Torre de Controle</span>
               </div>
-              <div className="text-[10px] font-black text-white/50 uppercase tracking-widest mt-1">
-                Acesso: <span className="text-yellow-500">
+              <div className="text-[9px] md:text-[10px] font-black text-white/50 uppercase tracking-widest mt-0.5">
+                <span className="text-yellow-500">
                   {view === 'DASHBOARD' && 'PAINEL LOGÍSTICO'}
                   {view === 'CARGOS_LIST' && 'VOOS DE CARGAS'}
                   {view === 'CARGO_ENTRY' && 'GERIR CARGAS'}
@@ -210,51 +211,92 @@ export const Layout: React.FC<LayoutProps> = ({ children, view, setView, onReset
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
             {currentUser && setCurrentUser && (
-              <div className="hidden sm:flex items-center gap-4 bg-slate-900 border border-slate-800 rounded-xl px-4 py-2">
-                <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg ${currentUser?.role === 'ADMIN' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-slate-800 text-slate-400'}`}>
-                    <UserCircle size={18} />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[10px] font-black uppercase text-slate-400 leading-none">{currentUser.name}</span>
-                    <span className="text-[9px] font-bold text-yellow-500 uppercase mt-1 tracking-widest">{currentUser.role}</span>
-                  </div>
-                </div>
+              <>
+                {/* Mobile: só ícone de logout */}
                 <button 
                   onClick={() => setCurrentUser(null)}
-                  className="ml-2 pl-4 border-l border-slate-800 text-[10px] font-black uppercase text-red-500 hover:text-red-400 transition-colors"
+                  className="sm:hidden flex items-center gap-1.5 px-2.5 py-2 bg-slate-900 border border-slate-800 rounded-xl text-red-500 text-[9px] font-black uppercase"
                 >
+                  <UserCircle size={14} />
                   Sair
                 </button>
-              </div>
+                {/* Desktop: card completo */}
+                <div className="hidden sm:flex items-center gap-4 bg-slate-900 border border-slate-800 rounded-xl px-4 py-2">
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-lg ${currentUser?.role === 'ADMIN' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-slate-800 text-slate-400'}`}>
+                      <UserCircle size={18} />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-black uppercase text-slate-400 leading-none">{currentUser.name}</span>
+                      <span className="text-[9px] font-bold text-yellow-500 uppercase mt-1 tracking-widest">{currentUser.role}</span>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => setCurrentUser(null)}
+                    className="ml-2 pl-4 border-l border-slate-800 text-[10px] font-black uppercase text-red-500 hover:text-red-400 transition-colors"
+                  >
+                    Sair
+                  </button>
+                </div>
+              </>
             )}
             
-            <button onClick={toggleFullscreen} className="p-3 text-slate-400 hover:text-white bg-slate-900/50 border border-slate-800 rounded-2xl transition-all hover:scale-105 active:scale-95 shadow-lg" title="Tela Cheia">
+            <button onClick={toggleFullscreen} className="hidden sm:flex p-3 text-slate-400 hover:text-white bg-slate-900/50 border border-slate-800 rounded-2xl transition-all hover:scale-105 active:scale-95 shadow-lg" title="Tela Cheia">
               {isFullscreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
             </button>
-            <div className="flex items-center gap-4 bg-slate-950 px-6 py-3 rounded-2xl border border-slate-800 shadow-inner group">
-              <Clock size={18} className="text-yellow-500 group-hover:scale-110 transition-transform" />
-              <span className="airport-font text-yellow-500 font-black text-xl glow-text">
+            <div className="hidden sm:flex items-center gap-3 bg-slate-950 px-4 py-2.5 rounded-2xl border border-slate-800 shadow-inner group">
+              <Clock size={16} className="text-yellow-500" />
+              <span className="airport-font text-yellow-500 font-black text-lg glow-text">
                 {time.toLocaleTimeString('pt-BR')}
+              </span>
+            </div>
+            {/* Mobile clock */}
+            <div className="sm:hidden flex items-center gap-1.5 bg-slate-950 px-2.5 py-2 rounded-xl border border-slate-800">
+              <Clock size={12} className="text-yellow-500" />
+              <span className="airport-font text-yellow-500 font-black text-sm">
+                {time.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
           </div>
         </header>
 
-        <main className="flex-1 p-6 md:p-10 overflow-y-auto bg-gradient-to-b from-[#020617] via-[#020617] to-[#0f172a]/20 custom-scrollbar">
+        <main className="flex-1 p-3 sm:p-6 md:p-10 overflow-y-auto bg-gradient-to-b from-[#020617] via-[#020617] to-[#0f172a]/20 custom-scrollbar">
           <div className="max-w-[1700px] mx-auto animate-in fade-in duration-1000">
             {children}
           </div>
         </main>
 
-            <footer className="p-6 text-center border-t border-slate-800/30 bg-[#020617]/90 backdrop-blur-md">
+            <footer className="hidden sm:block p-6 text-center border-t border-slate-800/30 bg-[#020617]/90 backdrop-blur-md">
               <div className="text-slate-600 text-[9px] font-black uppercase tracking-[0.5em] opacity-40">
                 &copy; {new Date().getFullYear()} CARGO TRANSPORTATION LOGISTICS SYSTEM • INDUSTRIAL GRADE
               </div>
             </footer>
           </div>
+
+          {/* ── Mobile Bottom Navigation ── */}
+          <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0f172a]/98 backdrop-blur-xl border-t border-slate-800 flex items-stretch safe-area-inset-bottom" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+            {navItems.slice(0, 5).map(item => (
+              <button
+                key={item.id}
+                onClick={() => setView(item.id)}
+                className={`flex-1 flex flex-col items-center justify-center gap-1 py-2.5 transition-all ${
+                  view === item.id
+                    ? 'text-yellow-500'
+                    : 'text-slate-500 active:text-slate-300'
+                }`}
+              >
+                <span className={`transition-transform ${ view === item.id ? 'scale-110' : '' }`}>
+                  {React.cloneElement(item.icon as React.ReactElement<any>, { size: 20 })}
+                </span>
+                <span className="text-[8px] font-black uppercase tracking-tight leading-none">
+                  {item.label.split(' ')[0]}
+                </span>
+                {view === item.id && <span className="absolute bottom-0 w-8 h-0.5 bg-yellow-500 rounded-full" />}
+              </button>
+            ))}
+          </nav>
         </>
       )}
     </div>
