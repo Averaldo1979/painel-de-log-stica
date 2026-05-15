@@ -16,9 +16,13 @@ import {
   Filter, 
   XCircle,
   Building2,
-  Users as UsersIcon
+  Users as UsersIcon,
+  RefreshCw,
+  Wifi,
+  WifiOff
 } from 'lucide-react';
 import { Cargo, Team, CargoStatus, Unit } from '../types';
+import { SyncState } from '../useRealtimeSync';
 
 interface AirportBoardProps {
   cargos: Cargo[];
@@ -30,6 +34,7 @@ interface AirportBoardProps {
   onEdit: (cargo: Cargo) => void;
   onClearAll: () => void;
   isTvMode?: boolean;
+  syncState?: SyncState;
 }
 
 export const AirportBoard: React.FC<AirportBoardProps> = ({ 
@@ -41,7 +46,8 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
   onDelete, 
   onEdit,
   onClearAll,
-  isTvMode = false
+  isTvMode = false,
+  syncState
 }) => {
   const [now, setNow] = useState(new Date());
   
@@ -83,6 +89,23 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
     }
   };
 
+  // Calcula duração entre dois timestamps ISO
+  const calcDuracao = (inicio?: string, fim?: string): string | null => {
+    if (!inicio) return null;
+    try {
+      const t0 = new Date(inicio).getTime();
+      const t1 = fim ? new Date(fim).getTime() : Date.now();
+      if (isNaN(t0) || isNaN(t1)) return null;
+      const totalMin = Math.round((t1 - t0) / 60000);
+      if (totalMin < 0) return null;
+      const h = Math.floor(totalMin / 60);
+      const m = totalMin % 60;
+      return h > 0 ? `${h}h ${m.toString().padStart(2,'0')}m` : `${m}m`;
+    } catch {
+      return null;
+    }
+  };
+
   const getStatusStyle = (status: CargoStatus) => {
     switch (status) {
       case CargoStatus.PROGRAMADO: return 'text-sky-400 bg-sky-400/5 border-sky-400/30';
@@ -102,8 +125,9 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
         
         let matchesDate = true;
         if (filterSlaughterDate) {
-          const cargoDate = cargo.slaughterTime.split('T')[0];
-          matchesDate = cargoDate === filterSlaughterDate;
+          const rawDate = cargo.slaughterTime ?? '';
+          const cargoDate = rawDate.includes('T') ? rawDate.split('T')[0] : rawDate.substring(0, 10);
+          matchesDate = !!cargoDate && cargoDate === filterSlaughterDate;
         }
 
         return matchesUnit && matchesTeam && matchesDate;
@@ -121,6 +145,66 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
 
   return (
     <div className="space-y-6">
+
+      {/* ── Barra de Status em Tempo Real ── */}
+      {syncState && (
+        <div className={`flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 rounded-xl border transition-all duration-500 ${
+          syncState.isSyncing
+            ? 'bg-yellow-500/10 border-yellow-500/30'
+            : syncState.errorCount > 0
+            ? 'bg-red-500/10 border-red-500/30'
+            : 'bg-emerald-500/5 border-emerald-500/20'
+        }`}>
+          <div className="flex items-center gap-3">
+            {/* Dot ao vivo */}
+            <span className={`relative flex h-2.5 w-2.5`}>
+              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
+                syncState.isSyncing ? 'bg-yellow-400' : syncState.errorCount > 0 ? 'bg-red-400' : 'bg-emerald-400'
+              }`} />
+              <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${
+                syncState.isSyncing ? 'bg-yellow-500' : syncState.errorCount > 0 ? 'bg-red-500' : 'bg-emerald-500'
+              }`} />
+            </span>
+            <span className={`text-[9px] font-black uppercase tracking-widest ${
+              syncState.isSyncing ? 'text-yellow-400' : syncState.errorCount > 0 ? 'text-red-400' : 'text-emerald-400'
+            }`}>
+              {syncState.isSyncing
+                ? 'Sincronizando dados...'
+                : syncState.errorCount > 0
+                ? `Erro de conexão (${syncState.errorCount}x)`
+                : 'Ao Vivo • Tempo Real'}
+            </span>
+            {!syncState.isSyncing && syncState.lastSync && (
+              <span className="text-[9px] text-slate-600 font-bold uppercase tracking-wider hidden sm:inline">
+                Atualizado: {syncState.lastSync.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-3">
+            {!syncState.isSyncing && (
+              <div className="flex items-center gap-2">
+                <RefreshCw size={10} className="text-slate-600" />
+                <span className="text-[9px] font-bold text-slate-600 uppercase tracking-wider">
+                  Próx. em {syncState.nextSyncIn}s
+                </span>
+                {/* Barra de progresso do countdown */}
+                <div className="w-16 h-1 bg-slate-800 rounded-full overflow-hidden hidden sm:block">
+                  <div
+                    className="h-full bg-emerald-500/50 rounded-full transition-all duration-1000"
+                    style={{ width: `${(1 - syncState.nextSyncIn / 30) * 100}%` }}
+                  />
+                </div>
+              </div>
+            )}
+            {syncState.errorCount > 0 ? (
+              <WifiOff size={14} className="text-red-500" />
+            ) : (
+              <Wifi size={14} className={syncState.isSyncing ? 'text-yellow-500 animate-pulse' : 'text-emerald-500'} />
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Filtros */}
       {!isTvMode && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-[#1e293b] p-4 rounded-xl border border-slate-700">
@@ -270,8 +354,40 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
                       </div>
 
                       <div className="flex items-center justify-between mt-5 pt-4 border-t border-slate-700/50">
-                        <div className="text-[9px] font-black text-emerald-500/40 uppercase">
-                          {cargo.status === CargoStatus.FINALIZADO ? `${cargo.endDate} ${cargo.endTime}` : ''}
+                        <div className="flex flex-col gap-0.5">
+                          {/* Horário de início */}
+                          {cargo.horario_inicio && (
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[8px] font-black text-slate-600 uppercase tracking-wider">Início:</span>
+                              <span className="text-[9px] font-black text-sky-400/70 airport-font">
+                                {new Date(cargo.horario_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                              </span>
+                            </div>
+                          )}
+                          {/* Horário de fim + duração */}
+                          {cargo.status === CargoStatus.FINALIZADO && cargo.horario_fim && (
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[8px] font-black text-slate-600 uppercase tracking-wider">Fim:</span>
+                              <span className="text-[9px] font-black text-emerald-400/70 airport-font">
+                                {new Date(cargo.horario_fim).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                              </span>
+                              {(() => {
+                                const dur = calcDuracao(cargo.horario_inicio, cargo.horario_fim);
+                                return dur ? (
+                                  <span className="text-[8px] font-black text-yellow-500/60 uppercase tracking-wider">({dur})</span>
+                                ) : null;
+                              })()}
+                            </div>
+                          )}
+                          {/* Em andamento: mostra tempo decorrido */}
+                          {cargo.status === CargoStatus.CARREGANDO && cargo.horario_inicio && (
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[8px] font-black text-yellow-500/50 uppercase tracking-wider animate-pulse">Decorrido:</span>
+                              <span className="text-[9px] font-black text-yellow-400/70 airport-font">
+                                {calcDuracao(cargo.horario_inicio) ?? '--'}
+                              </span>
+                            </div>
+                          )}
                         </div>
                         {!isTvMode && (
                           <div className="flex justify-end gap-2">

@@ -31,9 +31,11 @@ export interface Cargo {
   unitId: string;
   unit: string;
   status: CargoStatus;
-  startTime?: string; 
-  endTime?: string; 
-  endDate?: string; 
+  startTime?: string;          // HH:MM (legado — exibição)
+  endTime?: string;            // HH:MM (legado — exibição)
+  endDate?: string;            // DD/MM/YYYY (legado — exibição)
+  horario_inicio?: string;     // ISO 8601 — timestamp completo de início da operação
+  horario_fim?: string;        // ISO 8601 — timestamp completo de finalização da operação
 }
 
 export type ViewMode = 'DASHBOARD' | 'CARGOS_LIST' | 'TEAMS' | 'CARGO_ENTRY' | 'UNITS' | 'LOADING' | 'USERS' | 'TV_PANEL';

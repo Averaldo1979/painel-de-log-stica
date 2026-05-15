@@ -11,6 +11,7 @@ import { LoginScreen } from './components/LoginScreen';
 import { Team, Cargo, ViewMode, CargoStatus, Unit, User } from './types';
 import { Database, WifiOff, Wifi } from 'lucide-react';
 import { unitsApi, teamsApi, cargosApi, pingApi } from './sheetsApi';
+import { useRealtimeSync } from './useRealtimeSync';
 
 // ── Diagnostic Logger ─────────────────────────────────────────
 const diagLog = (stage: string, data?: unknown) => {
@@ -149,6 +150,13 @@ const App: React.FC = () => {
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  // ── Sincronização em tempo real (polling + Visibility API + BroadcastChannel) ──
+  const syncState = useRealtimeSync({
+    intervalMs: 30_000,          // atualiza a cada 30 segundos
+    enabled: !!currentUser,      // só quando logado
+    onSync: loadData,
+  });
 
   // ----------------------------------------------------------------
   // Usuários (localStorage, sem persistência remota para segurança)
@@ -368,15 +376,18 @@ const App: React.FC = () => {
   };
 
   const startCargo = (id: string) => {
-    const time = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-    updateCargo(id, { status: CargoStatus.CARREGANDO, startTime: time });
+    const now = new Date();
+    const time = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const horario_inicio = now.toISOString(); // timestamp completo para auditoria
+    updateCargo(id, { status: CargoStatus.CARREGANDO, startTime: time, horario_inicio });
   };
 
   const endCargo = (id: string) => {
     const now = new Date();
     const time = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
     const date = now.toLocaleDateString('pt-BR');
-    updateCargo(id, { status: CargoStatus.FINALIZADO, endTime: time, endDate: date });
+    const horario_fim = now.toISOString(); // timestamp completo para auditoria
+    updateCargo(id, { status: CargoStatus.FINALIZADO, endTime: time, endDate: date, horario_fim });
   };
 
   const handleEditCargo = (cargo: Cargo) => {
@@ -458,6 +469,7 @@ const App: React.FC = () => {
           onStart={startCargo} onEnd={endCargo}
           onDelete={deleteCargo} onEdit={handleEditCargo}
           onClearAll={clearAllCargos}
+          syncState={syncState}
         />
       )}
       {view === 'UNITS' && (
