@@ -124,25 +124,25 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
           if (values.length >= 6) {
             /** 
              * Ordem esperada no CSV:
-             * 0: Equipe (Ex: 001)
-             * 1: Integrado
-             * 2: Cidade
-             * 3: Hora Apanha (Formato: YYYY-MM-DDTHH:mm)
-             * 4: Numero Aves
-             * 5: Total Carga (Kg)
-             * 6: Unidade (Opcional - Nome)
-             * 7: Numero Carga (Novo)
-             * 8: Hora Abate (Novo - Formato: YYYY-MM-DDTHH:mm)
+             * 0: Nº Carga (ID Logístico) — Ex: 10442
+             * 1: Equipe (Ex: 001)
+             * 2: Integrado
+             * 3: Cidade
+             * 4: Hora Apanha (Formato: YYYY-MM-DDTHH:mm)
+             * 5: Numero Aves
+             * 6: Total Carga (Kg)
+             * 7: Unidade (Opcional - Nome)
+             * 8: Hora Abate (Formato: YYYY-MM-DDTHH:mm)
              */
 
-            const teamNum = values[0];
-            const integrated = values[1];
-            const city = values[2];
-            const pickup = values[3];
-            const birds = parseInt(values[4]) || 0;
-            const load = parseInt(values[5]) || 0;
-            const unitName = values[6] || '';
-            const cargoNum = values[7] || (Math.floor(Math.random() * 90000) + 10000).toString();
+            const cargoNum = values[0] || (Math.floor(Math.random() * 90000) + 10000).toString();
+            const teamNum = values[1];
+            const integrated = values[2];
+            const city = values[3];
+            const pickup = values[4];
+            const birds = parseInt(values[5]) || 0;
+            const load = parseInt(values[6]) || 0;
+            const unitName = values[7] || '';
             const slaughter = values[8] || pickup; // Fallback para pickup se não houver abate
 
             // Busca a equipe exata
@@ -194,8 +194,8 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
   };
 
   const downloadTemplate = () => {
-    const header = "Equipe,Integrado,Cidade,Hora Apanha,Numero Aves,Total Carga,Unidade,Numero Carga,Hora Abate\n";
-    const example = "001,Produtor Exemplo,Cidade Exemplo,2024-05-20T08:00,5000,12500,UNIDADE A,10442,2024-05-20T14:30";
+    const header = "Nº Carga (ID Logístico),Equipe,Integrado,Cidade,Hora Apanha,Numero Aves,Total Carga,Unidade,Hora Abate\n";
+    const example = "10442,001,Produtor Exemplo,Cidade Exemplo,2024-05-20T08:00,5000,12500,UNIDADE A,2024-05-20T14:30";
     const blob = new Blob(["\uFEFF" + header + example], { type: 'text/csv;charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
