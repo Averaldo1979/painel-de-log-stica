@@ -34,29 +34,32 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ cargos, teams,
   const filteredCargos = useMemo(() => {
     return cargos.filter(cargo => {
       if (selectedDate) {
-        const cargoDate = cargo.slaughterTime.split('T')[0];
-        if (cargoDate !== selectedDate) return false;
+        // Guard: slaughterTime pode ser undefined em dados antigos
+        const rawDate = cargo.slaughterTime ?? '';
+        const cargoDate = rawDate.includes('T') ? rawDate.split('T')[0] : rawDate.substring(0, 10);
+        if (cargoDate && cargoDate !== selectedDate) return false;
       }
       if (selectedUnit) {
         if (cargo.unitId !== selectedUnit) return false;
       }
       return true;
     }).sort((a, b) => {
-      return a.cargoNumber.localeCompare(b.cargoNumber, undefined, { numeric: true, sensitivity: 'base' });
+      return (a.cargoNumber ?? '').localeCompare(b.cargoNumber ?? '', undefined, { numeric: true, sensitivity: 'base' });
     });
   }, [cargos, selectedDate, selectedUnit]);
 
   const stats = useMemo(() => {
     return filteredCargos.reduce((acc, cargo) => {
       const status = getEffectiveStatus(cargo);
-      const birds = cargo.birdCount || 0;
+      const birds = Number(cargo.birdCount) || 0;
       if (status === CargoStatus.FINALIZADO) { acc.finalizado++; acc.avesFinalizado += birds; }
       else if (status === CargoStatus.CARREGANDO) { acc.carregando++; acc.avesCarregando += birds; }
       else if (status === CargoStatus.ATRASADO) { acc.apenasAtrasado++; acc.avesAtrasado += birds; }
       else { acc.apenasProgramado++; acc.avesProgramado += birds; }
       return acc;
     }, { finalizado: 0, avesFinalizado: 0, carregando: 0, avesCarregando: 0, apenasAtrasado: 0, avesAtrasado: 0, apenasProgramado: 0, avesProgramado: 0 });
-  }, [filteredCargos, now]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredCargos]);
 
   const getTeamLabel = (teamId: string) => {
     const team = teams.find(t => t.id === teamId);
@@ -295,8 +298,8 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ cargos, teams,
                           </div>
                         </td>
                         <td className="px-6 py-4 text-center">
-                          <div className="font-black text-white text-sm leading-none">{cargo.birdCount.toLocaleString()}</div>
-                          <div className="text-[9px] text-slate-500 font-bold uppercase tracking-tight mt-1">{cargo.totalLoad.toLocaleString()} KG</div>
+                          <div className="font-black text-white text-sm leading-none">{(Number(cargo.birdCount) || 0).toLocaleString()}</div>
+                          <div className="text-[9px] text-slate-500 font-bold uppercase tracking-tight mt-1">{(Number(cargo.totalLoad) || 0).toLocaleString()} KG</div>
                         </td>
                       </tr>
                     );

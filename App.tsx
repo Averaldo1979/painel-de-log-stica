@@ -40,13 +40,6 @@ const generateId = () => {
 const USERS_KEY = 'users_v2';
 
 const App: React.FC = () => {
-  diagLog('APP_MOUNT — React tree iniciado');
-  diagLog('ENV', {
-    VITE_SHEETS_API_URL: import.meta.env.VITE_SHEETS_API_URL ?? '(não definida)',
-    MODE: import.meta.env.MODE,
-    DEV: import.meta.env.DEV,
-    userAgent: navigator.userAgent,
-  });
   const [isSyncing, setIsSyncing] = useState(false);
   const [isOnline, setIsOnline] = useState(false);
   const [units, setUnits] = useState<Unit[]>([]);
@@ -140,6 +133,17 @@ const App: React.FC = () => {
     loadUsers();
     setIsSyncing(false);
     diagLog('LOAD_DATA ✓✓ pronto');
+  }, []);
+
+  useEffect(() => {
+    // Diagnóstico: executa apenas uma vez na montagem
+    diagLog('APP_MOUNT — React tree montado (uma vez)');
+    diagLog('ENV', {
+      VITE_SHEETS_API_URL: import.meta.env.VITE_SHEETS_API_URL ?? '(não definida)',
+      MODE: import.meta.env.MODE,
+      DEV: import.meta.env.DEV,
+      userAgent: navigator.userAgent,
+    });
   }, []);
 
   useEffect(() => {

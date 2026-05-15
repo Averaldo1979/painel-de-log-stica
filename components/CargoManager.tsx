@@ -482,7 +482,7 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
                         <div>
                           <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-1">Aves / Peso</p>
                           <p className="text-slate-200 text-sm font-medium uppercase">
-                            <span className="text-white">{cargo.birdCount.toLocaleString()}</span> / <span className="text-yellow-500">{cargo.totalLoad.toLocaleString()} Kg</span>
+                            <span className="text-white">{(Number(cargo.birdCount) || 0).toLocaleString()}</span> / <span className="text-yellow-500">{(Number(cargo.totalLoad) || 0).toLocaleString()} Kg</span>
                           </p>
                         </div>
                       </div>
