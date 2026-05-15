@@ -18,7 +18,10 @@ const API_URL = import.meta.env.VITE_SHEETS_API_URL as string;
 async function apiGet<T>(entity: string): Promise<T[]> {
   if (!API_URL) throw new Error('VITE_SHEETS_API_URL não configurada');
   const url = `${API_URL}?entity=${entity}`;
+  const t0 = performance.now();
+  console.log(`[DIAG API] GET ${entity} →`, url);
   const res = await fetch(url);
+  console.log(`[DIAG API] GET ${entity} ← status=${res.status} (${(performance.now()-t0).toFixed(0)}ms)`);
   if (!res.ok) throw new Error(`Erro HTTP ${res.status}`);
   const json = await res.json();
   if (json.error) throw new Error(json.error);
@@ -27,12 +30,15 @@ async function apiGet<T>(entity: string): Promise<T[]> {
 
 async function apiPost<T>(body: object): Promise<T> {
   if (!API_URL) throw new Error('VITE_SHEETS_API_URL não configurada');
+  const t0 = performance.now();
+  console.log(`[DIAG API] POST`, body);
   const res = await fetch(API_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'text/plain' }, // Apps Script exige text/plain para evitar preflight CORS
+    headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify(body),
     redirect: 'follow',
   });
+  console.log(`[DIAG API] POST ← status=${res.status} (${(performance.now()-t0).toFixed(0)}ms)`);
   if (!res.ok) throw new Error(`Erro HTTP ${res.status}`);
   const json = await res.json();
   if (json.error) throw new Error(json.error);
@@ -78,12 +84,19 @@ export const cargosApi = {
 // ---------------------------------------------------------------
 export async function pingApi(): Promise<boolean> {
   try {
-    if (!API_URL) return false;
+    if (!API_URL) {
+      console.warn('[DIAG API] pingApi: VITE_SHEETS_API_URL não definida');
+      return false;
+    }
     const url = `${API_URL}?action=ping`;
+    const t0 = performance.now();
+    console.log('[DIAG API] ping →', url);
     const res = await fetch(url, { redirect: 'follow' });
     const json = await res.json();
+    console.log(`[DIAG API] ping ← ok=${json.ok} (${(performance.now()-t0).toFixed(0)}ms)`);
     return json.ok === true;
-  } catch {
+  } catch (err) {
+    console.error('[DIAG API] ping falhou:', err);
     return false;
   }
 }

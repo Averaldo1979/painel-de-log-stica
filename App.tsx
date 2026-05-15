@@ -12,6 +12,23 @@ import { Team, Cargo, ViewMode, CargoStatus, Unit, User } from './types';
 import { Database, WifiOff, Wifi } from 'lucide-react';
 import { unitsApi, teamsApi, cargosApi, pingApi } from './sheetsApi';
 
+// ── Diagnostic Logger ─────────────────────────────────────────
+const diagLog = (stage: string, data?: unknown) => {
+  const ts = new Date().toISOString().slice(11, 23); // HH:MM:SS.mmm
+  const msg = `[DIAG ${ts}] ▶ ${stage}`;
+  if (data !== undefined) {
+    console.groupCollapsed(msg);
+    console.log(data);
+    console.groupEnd();
+  } else {
+    console.log(msg);
+  }
+};
+const diagError = (stage: string, err: unknown) => {
+  const ts = new Date().toISOString().slice(11, 23);
+  console.error(`[DIAG ${ts}] ❌ ${stage}`, err);
+};
+
 const generateId = () => {
   try {
     return crypto.randomUUID();
@@ -23,6 +40,13 @@ const generateId = () => {
 const USERS_KEY = 'users_v2';
 
 const App: React.FC = () => {
+  diagLog('APP_MOUNT — React tree iniciado');
+  diagLog('ENV', {
+    VITE_SHEETS_API_URL: import.meta.env.VITE_SHEETS_API_URL ?? '(não definida)',
+    MODE: import.meta.env.MODE,
+    DEV: import.meta.env.DEV,
+    userAgent: navigator.userAgent,
+  });
   const [isSyncing, setIsSyncing] = useState(false);
   const [isOnline, setIsOnline] = useState(false);
   const [units, setUnits] = useState<Unit[]>([]);
@@ -39,24 +63,28 @@ const App: React.FC = () => {
   // Carregamento inicial
   // ----------------------------------------------------------------
   const loadData = useCallback(async () => {
+    diagLog('LOAD_DATA — iniciando carregamento');
     setIsSyncing(true);
     setSyncError('');
 
     try {
-      // Verifica se a API está configurada e acessível
+      diagLog('PING_API — verificando conectividade com a API');
       const apiAvailable = await pingApi();
+      diagLog('PING_API — resultado', { apiAvailable, url: import.meta.env.VITE_SHEETS_API_URL });
       setIsOnline(apiAvailable);
 
       if (apiAvailable) {
-        // Carrega cada entidade individualmente para isolar falhas
         const loadSafe = async <T,>(fn: () => Promise<T[]>, key: string): Promise<T[]> => {
+          diagLog(`LOAD_ENTITY — buscando "${key}" da API`);
           try {
             const data = await fn();
+            diagLog(`LOAD_ENTITY ✓ "${key}"`, { count: data.length });
             localStorage.setItem(key, JSON.stringify(data));
             return data;
           } catch (e: any) {
-            console.warn(`Falha ao carregar ${key} da API:`, e.message);
+            diagError(`LOAD_ENTITY "${key}" — falhou, usando cache local`, e);
             const cached = localStorage.getItem(key);
+            diagLog(`LOAD_ENTITY ⚠ "${key}" — cache local`, { found: !!cached });
             return cached ? JSON.parse(cached) : [];
           }
         };
@@ -67,14 +95,25 @@ const App: React.FC = () => {
           loadSafe<Cargo>(cargosApi.getAll, 'cargos_v2'),
         ]);
 
+        diagLog('LOAD_DATA ✓ remoto completo', {
+          units: remoteUnits.length,
+          teams: remoteTeams.length,
+          cargos: remoteCargos.length,
+        });
         setUnits(remoteUnits);
         setTeams(remoteTeams);
         setCargos(remoteCargos);
       } else {
         // Sem API: carrega do localStorage (modo offline)
+        diagLog('LOAD_DATA ⚠ offline — carregando localStorage');
         const savedUnits = localStorage.getItem('units_v2');
         const savedTeams = localStorage.getItem('teams_v2');
         const savedCargos = localStorage.getItem('cargos_v2');
+        diagLog('LOAD_DATA localStorage', {
+          units: savedUnits ? JSON.parse(savedUnits).length : 'vazio',
+          teams: savedTeams ? JSON.parse(savedTeams).length : 'vazio',
+          cargos: savedCargos ? JSON.parse(savedCargos).length : 'vazio',
+        });
 
         if (savedUnits) setUnits(JSON.parse(savedUnits));
         if (savedTeams) setTeams(JSON.parse(savedTeams));
@@ -87,8 +126,8 @@ const App: React.FC = () => {
         }
       }
     } catch (err: any) {
+      diagError('LOAD_DATA — erro geral na inicialização', err);
       setSyncError('Erro ao carregar: ' + err.message);
-      // Fallback para localStorage
       const savedUnits = localStorage.getItem('units_v2');
       const savedTeams = localStorage.getItem('teams_v2');
       const savedCargos = localStorage.getItem('cargos_v2');
@@ -97,9 +136,10 @@ const App: React.FC = () => {
       if (savedCargos) setCargos(JSON.parse(savedCargos));
     }
 
-    // Carrega usuários (sempre local — segurança)
+    diagLog('LOAD_DATA ✓ concluído — carregando usuários');
     loadUsers();
     setIsSyncing(false);
+    diagLog('LOAD_DATA ✓✓ pronto');
   }, []);
 
   useEffect(() => {

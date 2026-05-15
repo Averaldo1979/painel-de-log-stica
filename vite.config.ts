@@ -5,6 +5,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
+    const isDiag = env.VITE_DIAG === 'true';
     return {
       server: {
         port: 3000,
@@ -98,6 +99,13 @@ export default defineConfig(({ mode }) => {
           }
         })
       ],
+      // ── Diagnostic build (VITE_DIAG=true) ──────────────────────
+      ...(isDiag ? {
+        build: {
+          sourcemap: true,
+          minify: false,
+        },
+      } : {}),
       // Expõe apenas as variáveis não-VITE_ manualmente.
       // Variáveis VITE_* são injetadas automaticamente pelo Vite no import.meta.env.
       define: {
