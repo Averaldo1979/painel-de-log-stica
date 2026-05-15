@@ -44,7 +44,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ cargos, teams,
       }
       return true;
     }).sort((a, b) => {
-      return (a.cargoNumber ?? '').localeCompare(b.cargoNumber ?? '', undefined, { numeric: true, sensitivity: 'base' });
+      return String(a.cargoNumber ?? '').localeCompare(String(b.cargoNumber ?? ''), undefined, { numeric: true, sensitivity: 'base' });
     });
   }, [cargos, selectedDate, selectedUnit]);
 

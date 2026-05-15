@@ -109,7 +109,7 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
         return matchesUnit && matchesTeam && matchesDate;
       })
       .sort((a, b) => {
-        return a.cargoNumber.localeCompare(b.cargoNumber, undefined, { numeric: true, sensitivity: 'base' });
+        return String(a.cargoNumber ?? '').localeCompare(String(b.cargoNumber ?? ''), undefined, { numeric: true, sensitivity: 'base' });
       });
   }, [cargos, filterUnitId, filterTeamId, filterSlaughterDate]);
 

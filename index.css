@@ -1,7 +1,10 @@
 /* ============================================================
    index.css — Base global styles for Torre de Controle
-   (This file is referenced in index.html and must exist)
    ============================================================ */
+
+/* Tailwind CSS v4 — processado via PostCSS (não mais CDN) */
+@import "tailwindcss";
+
 
 *, *::before, *::after {
   box-sizing: border-box;

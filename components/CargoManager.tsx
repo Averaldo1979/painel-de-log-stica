@@ -436,7 +436,7 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
             <div className="py-12 text-center text-slate-600 uppercase font-bold text-xs tracking-widest">Nenhuma carga cadastrada</div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[...cargos].sort((a,b) => a.cargoNumber.localeCompare(b.cargoNumber, undefined, {numeric: true})).map(cargo => {
+              {[...cargos].sort((a,b) => String(a.cargoNumber ?? '').localeCompare(String(b.cargoNumber ?? ''), undefined, {numeric: true})).map(cargo => {
                 const team = teams.find(t => t.id === cargo.teamId);
                 const formatTime = (timeStr: string) => {
                   try {
