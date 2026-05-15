@@ -48,40 +48,35 @@ const App: React.FC = () => {
       setIsOnline(apiAvailable);
 
       if (apiAvailable) {
-        // Carrega do Google Sheets
+        // Carrega cada entidade individualmente para isolar falhas
+        const loadSafe = async <T,>(fn: () => Promise<T[]>, key: string): Promise<T[]> => {
+          try {
+            const data = await fn();
+            localStorage.setItem(key, JSON.stringify(data));
+            return data;
+          } catch (e: any) {
+            console.warn(`Falha ao carregar ${key} da API:`, e.message);
+            const cached = localStorage.getItem(key);
+            return cached ? JSON.parse(cached) : [];
+          }
+        };
+
         const [remoteUnits, remoteTeams, remoteCargos] = await Promise.all([
-          unitsApi.getAll(),
-          teamsApi.getAll(),
-          cargosApi.getAll(),
+          loadSafe<Unit>(unitsApi.getAll, 'units_v2'),
+          loadSafe<Team>(teamsApi.getAll, 'teams_v2'),
+          loadSafe<Cargo>(cargosApi.getAll, 'cargos_v2'),
         ]);
 
-        // Garante unidade "500"
-        let finalUnits = remoteUnits;
-        if (!remoteUnits.find(u => u.name === '500')) {
-          const unit500: Unit = { id: generateId(), name: '500' };
-          await unitsApi.create(unit500);
-          finalUnits = [...remoteUnits, unit500];
-        }
-
-        setUnits(finalUnits);
+        setUnits(remoteUnits);
         setTeams(remoteTeams);
         setCargos(remoteCargos);
-
-        // Persiste localmente como cache offline
-        localStorage.setItem('units_v2', JSON.stringify(finalUnits));
-        localStorage.setItem('teams_v2', JSON.stringify(remoteTeams));
-        localStorage.setItem('cargos_v2', JSON.stringify(remoteCargos));
       } else {
         // Sem API: carrega do localStorage (modo offline)
         const savedUnits = localStorage.getItem('units_v2');
         const savedTeams = localStorage.getItem('teams_v2');
         const savedCargos = localStorage.getItem('cargos_v2');
 
-        let parsedUnits: Unit[] = savedUnits ? JSON.parse(savedUnits) : [];
-        if (!parsedUnits.find(u => u.name === '500')) {
-          parsedUnits.push({ id: generateId(), name: '500' });
-        }
-        setUnits(parsedUnits);
+        if (savedUnits) setUnits(JSON.parse(savedUnits));
         if (savedTeams) setTeams(JSON.parse(savedTeams));
         if (savedCargos) setCargos(JSON.parse(savedCargos));
 
