@@ -19,7 +19,7 @@ const HEADERS = {
   cargos: [
     'id', 'cargoNumber', 'slaughterTime', 'teamId', 'integrated',
     'city', 'pickupTime', 'birdCount', 'totalLoad', 'unitId', 'unit',
-    'status', 'startTime', 'endTime', 'endDate'
+    'status', 'startTime', 'endTime', 'endDate', 'horario_inicio', 'horario_fim'
   ]
 };
 
