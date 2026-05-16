@@ -57,7 +57,7 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
   const [filterSlaughterDate, setFilterSlaughterDate] = useState('');
 
   useEffect(() => {
-    const timer = setInterval(() => setNow(new Date()), 10000);
+    const timer = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -94,13 +94,29 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
     if (!inicio) return null;
     try {
       const t0 = new Date(inicio).getTime();
-      const t1 = fim ? new Date(fim).getTime() : Date.now();
+      const t1 = fim ? new Date(fim).getTime() : now.getTime();
       if (isNaN(t0) || isNaN(t1)) return null;
       const totalMin = Math.round((t1 - t0) / 60000);
       if (totalMin < 0) return null;
       const h = Math.floor(totalMin / 60);
       const m = totalMin % 60;
       return h > 0 ? `${h}h ${m.toString().padStart(2,'0')}m` : `${m}m`;
+    } catch {
+      return null;
+    }
+  };
+
+  const formatStopwatch = (inicio?: string, fim?: string): string | null => {
+    if (!inicio) return null;
+    try {
+      const t0 = new Date(inicio).getTime();
+      const t1 = fim ? new Date(fim).getTime() : now.getTime();
+      if (isNaN(t0) || isNaN(t1)) return null;
+      const totalSecs = Math.max(0, Math.floor((t1 - t0) / 1000));
+      const h = Math.floor(totalSecs / 3600);
+      const m = Math.floor((totalSecs % 3600) / 60);
+      const s = totalSecs % 60;
+      return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
     } catch {
       return null;
     }
@@ -353,56 +369,53 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between mt-5 pt-4 border-t border-slate-700/50">
-                        <div className="flex flex-col gap-0.5">
+                      <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between mt-5 pt-4 border-t border-slate-700/50 gap-4">
+                        <div className="flex items-center gap-3 sm:gap-6 flex-wrap">
                           {/* Horário de início */}
-                          {cargo.horario_inicio && (
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-[8px] font-black text-slate-600 uppercase tracking-wider">Início:</span>
-                              <span className="text-[9px] font-black text-sky-400/70 airport-font">
-                                {new Date(cargo.horario_inicio).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}
-                              </span>
-                            </div>
-                          )}
-                          {/* Horário de fim + duração */}
-                          {cargo.status === CargoStatus.FINALIZADO && cargo.horario_fim && (
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-[8px] font-black text-slate-600 uppercase tracking-wider">Fim:</span>
-                              <span className="text-[9px] font-black text-emerald-400/70 airport-font">
-                                {new Date(cargo.horario_fim).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}
-                              </span>
-                              {(() => {
-                                const dur = calcDuracao(cargo.horario_inicio, cargo.horario_fim);
-                                return dur ? (
-                                  <span className="text-[8px] font-black text-yellow-500/60 uppercase tracking-wider">({dur})</span>
-                                ) : null;
-                              })()}
-                            </div>
-                          )}
-                          {/* Em andamento: mostra tempo decorrido */}
-                          {cargo.status === CargoStatus.CARREGANDO && cargo.horario_inicio && (
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-[8px] font-black text-yellow-500/50 uppercase tracking-wider animate-pulse">Decorrido:</span>
-                              <span className="text-[9px] font-black text-yellow-400/70 airport-font">
-                                {calcDuracao(cargo.horario_inicio) ?? '--'}
-                              </span>
-                            </div>
-                          )}
+                          <div className="flex flex-col">
+                            <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Início Real</span>
+                            <span className={`text-sm sm:text-base font-black airport-font px-2 py-1 rounded-md border ${cargo.horario_inicio ? 'text-sky-400 bg-sky-400/10 border-sky-400/20' : 'text-slate-600 bg-slate-800/50 border-slate-700'}`}>
+                              {cargo.horario_inicio ? new Date(cargo.horario_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '--:--'}
+                            </span>
+                          </div>
+                          
+                          {/* Horário de fim */}
+                          <div className="flex flex-col">
+                            <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Fim Real</span>
+                            <span className={`text-sm sm:text-base font-black airport-font px-2 py-1 rounded-md border ${cargo.horario_fim ? 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20' : 'text-slate-600 bg-slate-800/50 border-slate-700'}`}>
+                              {cargo.horario_fim ? new Date(cargo.horario_fim).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '--:--'}
+                            </span>
+                          </div>
+
+                          {/* Cronômetro */}
+                          <div className="flex flex-col">
+                            <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Duração</span>
+                            <span className={`text-sm sm:text-base font-black airport-font px-2 py-1 rounded-md border tracking-wider ${
+                              cargo.status === CargoStatus.CARREGANDO 
+                                ? 'text-yellow-400 bg-yellow-400/10 border-yellow-400/30 shadow-[0_0_10px_rgba(234,179,8,0.2)]' 
+                                : cargo.status === CargoStatus.FINALIZADO && cargo.horario_inicio
+                                ? 'text-slate-300 bg-slate-800 border-slate-700'
+                                : 'text-slate-600 bg-slate-800/50 border-slate-700'
+                            }`}>
+                              {formatStopwatch(cargo.horario_inicio, cargo.horario_fim) ?? '--:--:--'}
+                            </span>
+                          </div>
                         </div>
+
                         {!isTvMode && (
-                          <div className="flex justify-end gap-2">
+                          <div className="flex flex-wrap justify-end gap-2 w-full xl:w-auto">
                             {cargo.status === CargoStatus.PROGRAMADO && (
-                              <button onClick={() => onStart(cargo.id)} className="px-3 py-1.5 bg-sky-500 text-slate-950 rounded-lg font-black text-[9px] uppercase hover:bg-white transition-all shadow-lg z-20 relative">
+                              <button onClick={() => onStart(cargo.id)} className="px-3 py-1.5 bg-sky-500 text-slate-950 rounded-lg font-black text-[9px] uppercase hover:bg-white transition-all shadow-[0_0_10px_rgba(14,165,233,0.4)] hover:shadow-[0_0_15px_rgba(255,255,255,0.6)] z-20 relative">
                                 Iniciar
                               </button>
                             )}
                             {cargo.status === CargoStatus.CARREGANDO && (
-                              <button onClick={() => onEnd(cargo.id)} className="px-3 py-1.5 bg-emerald-500 text-slate-950 rounded-lg font-black text-[9px] uppercase hover:bg-white transition-all animate-pulse shadow-lg z-20 relative">
+                              <button onClick={() => onEnd(cargo.id)} className="px-3 py-1.5 bg-emerald-500 text-slate-950 rounded-lg font-black text-[9px] uppercase hover:bg-white transition-all shadow-[0_0_10px_rgba(16,185,129,0.4)] hover:shadow-[0_0_15px_rgba(255,255,255,0.6)] z-20 relative">
                                 Finalizar
                               </button>
                             )}
-                            <button onClick={() => onEdit(cargo)} className="p-2 text-slate-500 hover:text-yellow-500 hover:bg-yellow-500/10 rounded-lg transition-all z-20 relative" title="Editar"><Edit2 size={16} /></button>
-                            <button onClick={() => onDelete(cargo.id)} className="p-2 text-slate-500 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all z-20 relative" title="Excluir"><Trash2 size={16} /></button>
+                            <button onClick={() => onEdit(cargo)} className="p-2 text-slate-400 bg-slate-800 hover:text-yellow-500 hover:bg-yellow-500/10 rounded-lg transition-all border border-slate-700 hover:border-yellow-500/30 z-20 relative" title="Editar"><Edit2 size={14} /></button>
+                            <button onClick={() => onDelete(cargo.id)} className="p-2 text-slate-400 bg-slate-800 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all border border-slate-700 hover:border-red-500/30 z-20 relative" title="Excluir"><Trash2 size={14} /></button>
                           </div>
                         )}
                       </div>
