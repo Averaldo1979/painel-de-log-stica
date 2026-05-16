@@ -497,6 +497,23 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
                           <p className="text-yellow-500/80 text-xs font-black airport-font">{formatTime(cargo.slaughterTime)}</p>
                         </div>
                       </div>
+
+                      {(cargo.horario_inicio || cargo.horario_fim) && (
+                        <div className="grid grid-cols-2 gap-4 mt-3 pt-3 border-t border-slate-800/50">
+                          <div>
+                            <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-1">Início Real</p>
+                            <p className="text-sky-400/80 text-xs font-black airport-font">
+                              {cargo.horario_inicio ? new Date(cargo.horario_inicio).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }) : '---'}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-1">Fim Real</p>
+                            <p className="text-emerald-400/80 text-xs font-black airport-font">
+                              {cargo.horario_fim ? new Date(cargo.horario_fim).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }) : '---'}
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex justify-end gap-2 mt-5 pt-4 border-t border-slate-800">

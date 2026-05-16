@@ -16,6 +16,12 @@ export const UnitManager: React.FC<UnitManagerProps> = ({ units, onAdd, onUpdate
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (/^\d+$/.test(form.name.trim())) {
+      alert('O nome da unidade não pode conter apenas números (ex: 500). Por favor, insira um nome válido.');
+      return;
+    }
+
     if (isEditing) {
       onUpdate(isEditing, form);
       setIsEditing(null);

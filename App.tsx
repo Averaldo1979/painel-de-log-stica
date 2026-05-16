@@ -377,17 +377,17 @@ const App: React.FC = () => {
 
   const startCargo = (id: string) => {
     const now = new Date();
-    const time = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const dateTime = now.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
     const horario_inicio = now.toISOString(); // timestamp completo para auditoria
-    updateCargo(id, { status: CargoStatus.CARREGANDO, startTime: time, horario_inicio });
+    updateCargo(id, { status: CargoStatus.CARREGANDO, startTime: dateTime, horario_inicio });
   };
 
   const endCargo = (id: string) => {
     const now = new Date();
-    const time = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const dateTime = now.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
     const date = now.toLocaleDateString('pt-BR');
     const horario_fim = now.toISOString(); // timestamp completo para auditoria
-    updateCargo(id, { status: CargoStatus.FINALIZADO, endTime: time, endDate: date, horario_fim });
+    updateCargo(id, { status: CargoStatus.FINALIZADO, endTime: dateTime, endDate: date, horario_fim });
   };
 
   const handleEditCargo = (cargo: Cargo) => {

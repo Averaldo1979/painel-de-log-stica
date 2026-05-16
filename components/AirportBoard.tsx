@@ -360,7 +360,7 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
                             <div className="flex items-center gap-1.5">
                               <span className="text-[8px] font-black text-slate-600 uppercase tracking-wider">Início:</span>
                               <span className="text-[9px] font-black text-sky-400/70 airport-font">
-                                {new Date(cargo.horario_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                                {new Date(cargo.horario_inicio).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}
                               </span>
                             </div>
                           )}
@@ -369,7 +369,7 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
                             <div className="flex items-center gap-1.5">
                               <span className="text-[8px] font-black text-slate-600 uppercase tracking-wider">Fim:</span>
                               <span className="text-[9px] font-black text-emerald-400/70 airport-font">
-                                {new Date(cargo.horario_fim).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                                {new Date(cargo.horario_fim).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}
                               </span>
                               {(() => {
                                 const dur = calcDuracao(cargo.horario_inicio, cargo.horario_fim);
