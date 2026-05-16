@@ -76,7 +76,7 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
   const [now, setNow] = useState(new Date());
 
   useEffect(() => {
-    const timer = setInterval(() => setNow(new Date()), 10000);
+    const timer = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -86,6 +86,22 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
       if (now > scheduledDate) return CargoStatus.ATRASADO;
     }
     return cargo.status;
+  };
+
+  const formatStopwatch = (inicio?: string, fim?: string): string | null => {
+    if (!inicio) return null;
+    try {
+      const t0 = new Date(inicio).getTime();
+      const t1 = fim ? new Date(fim).getTime() : now.getTime();
+      if (isNaN(t0) || isNaN(t1)) return null;
+      const totalSecs = Math.max(0, Math.floor((t1 - t0) / 1000));
+      const h = Math.floor(totalSecs / 3600);
+      const m = Math.floor((totalSecs % 3600) / 60);
+      const s = totalSecs % 60;
+      return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    } catch {
+      return null;
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -499,17 +515,25 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
                       </div>
 
                       {(cargo.horario_inicio || cargo.horario_fim) && (
-                        <div className="grid grid-cols-2 gap-4 mt-3 pt-3 border-t border-slate-800/50">
+                        <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-slate-800/50">
                           <div>
                             <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-1">Início Real</p>
                             <p className="text-sky-400/80 text-xs font-black airport-font">
-                              {cargo.horario_inicio ? new Date(cargo.horario_inicio).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }) : '---'}
+                              {cargo.horario_inicio ? new Date(cargo.horario_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '---'}
                             </p>
                           </div>
                           <div>
                             <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-1">Fim Real</p>
                             <p className="text-emerald-400/80 text-xs font-black airport-font">
-                              {cargo.horario_fim ? new Date(cargo.horario_fim).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }) : '---'}
+                              {cargo.horario_fim ? new Date(cargo.horario_fim).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '---'}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-1">Duração</p>
+                            <p className={`text-xs font-black airport-font ${
+                              effectiveStatus === CargoStatus.CARREGANDO ? 'text-yellow-400 animate-pulse' : 'text-slate-400'
+                            }`}>
+                              {formatStopwatch(cargo.horario_inicio, cargo.horario_fim) ?? '--:--:--'}
                             </p>
                           </div>
                         </div>

@@ -12,7 +12,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ cargos, teams,
   const [now, setNow] = useState(new Date());
 
   useEffect(() => {
-    const timer = setInterval(() => setNow(new Date()), 10000);
+    const timer = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
   
@@ -88,6 +88,22 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ cargos, teams,
       };
     } catch {
       return { date: '---', time: isoString || '---', isPast: false };
+    }
+  };
+
+  const formatStopwatch = (inicio?: string, fim?: string): string | null => {
+    if (!inicio) return null;
+    try {
+      const t0 = new Date(inicio).getTime();
+      const t1 = fim ? new Date(fim).getTime() : now.getTime();
+      if (isNaN(t0) || isNaN(t1)) return null;
+      const totalSecs = Math.max(0, Math.floor((t1 - t0) / 1000));
+      const h = Math.floor(totalSecs / 3600);
+      const m = Math.floor((totalSecs % 3600) / 60);
+      const s = totalSecs % 60;
+      return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    } catch {
+      return null;
     }
   };
 
@@ -241,6 +257,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ cargos, teams,
                     <th className="px-6 py-4 text-center">Abate</th>
                     <th className="px-6 py-4 text-center">Início Real</th>
                     <th className="px-6 py-4 text-center">Fim Real</th>
+                    <th className="px-6 py-4 text-center">Duração</th>
                     <th className="px-6 py-4 text-center">Quant/Peso</th>
                   </tr>
                 </thead>
@@ -301,12 +318,19 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ cargos, teams,
                         </td>
                         <td className="px-6 py-4 text-center">
                           <div className="font-black text-sky-400 text-sm leading-none whitespace-nowrap">
-                            {cargo.horario_inicio ? new Date(cargo.horario_inicio).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(',', '') : '--:--'}
+                            {cargo.horario_inicio ? new Date(cargo.horario_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '--:--'}
                           </div>
                         </td>
                         <td className="px-6 py-4 text-center">
                           <div className="font-black text-emerald-400 text-sm leading-none whitespace-nowrap">
-                            {cargo.horario_fim ? new Date(cargo.horario_fim).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(',', '') : '--:--'}
+                            {cargo.horario_fim ? new Date(cargo.horario_fim).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '--:--'}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-center">
+                          <div className={`font-black text-sm leading-none whitespace-nowrap ${
+                            effectiveStatus === CargoStatus.CARREGANDO ? 'text-yellow-400 animate-pulse' : 'text-slate-400'
+                          }`}>
+                            {formatStopwatch(cargo.horario_inicio, cargo.horario_fim) ?? '--:--:--'}
                           </div>
                         </td>
                         <td className="px-6 py-4 text-center">
