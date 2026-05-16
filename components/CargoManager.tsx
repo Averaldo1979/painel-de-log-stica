@@ -248,7 +248,7 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="bg-[#1e293b] p-8 rounded-2xl border border-slate-700 shadow-2xl">
+      <div className="bg-gradient-to-br from-[#0f172a]/80 to-[#020617] backdrop-blur-xl border border-slate-800 p-8 rounded-3xl shadow-2xl">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-yellow-500/10 rounded-xl">
@@ -297,7 +297,7 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
               value={form.cargoNumber}
               onChange={e => setForm({...form, cargoNumber: e.target.value})}
               placeholder="Ex: 10442"
-              className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-yellow-500 outline-none transition-all airport-font font-bold text-yellow-500"
+              className="w-full bg-[#020617]/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500/50 outline-none transition-all airport-font font-bold text-sky-400 placeholder:text-slate-700"
             />
           </div>
 
@@ -310,7 +310,7 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
                 const team = teams.find(t => t.id === e.target.value);
                 setForm({...form, teamId: e.target.value, unitId: team?.unitId || '', unit: team?.unit || ''})
               }}
-              className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-yellow-500 outline-none transition-all appearance-none"
+              className="w-full bg-[#020617]/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500/50 outline-none transition-all appearance-none"
             >
               <option value="">Selecione a Equipe...</option>
               {teams.map(t => (
@@ -327,7 +327,7 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
               value={form.integrated}
               onChange={e => setForm({...form, integrated: e.target.value})}
               placeholder="Nome do integrado"
-              className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-yellow-500 outline-none transition-all"
+              className="w-full bg-[#020617]/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500/50 outline-none transition-all placeholder:text-slate-700"
             />
           </div>
 
@@ -339,7 +339,7 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
               value={form.city}
               onChange={e => setForm({...form, city: e.target.value})}
               placeholder="Cidade de origem/destino"
-              className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-yellow-500 outline-none transition-all"
+              className="w-full bg-[#020617]/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500/50 outline-none transition-all placeholder:text-slate-700"
             />
           </div>
 
@@ -350,7 +350,7 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
               type="datetime-local" 
               value={form.pickupTime}
               onChange={e => setForm({...form, pickupTime: e.target.value})}
-              className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-yellow-500 outline-none transition-all font-bold airport-font"
+              className="w-full bg-[#020617]/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500/50 outline-none transition-all font-bold airport-font"
             />
           </div>
 
@@ -361,7 +361,7 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
               type="datetime-local" 
               value={form.slaughterTime}
               onChange={e => setForm({...form, slaughterTime: e.target.value})}
-              className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-yellow-500 outline-none transition-all font-bold airport-font text-yellow-500/80"
+              className="w-full bg-[#020617]/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500/50 outline-none transition-all font-bold airport-font text-yellow-500/80"
             />
           </div>
 
@@ -373,7 +373,7 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
               value={form.birdCount || ''}
               onChange={e => setForm({...form, birdCount: parseInt(e.target.value) || 0})}
               placeholder="0"
-              className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-yellow-500 outline-none transition-all airport-font"
+              className="w-full bg-[#020617]/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500/50 outline-none transition-all airport-font placeholder:text-slate-700"
             />
           </div>
 
@@ -385,7 +385,7 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
               value={form.totalLoad || ''}
               onChange={e => setForm({...form, totalLoad: parseInt(e.target.value) || 0})}
               placeholder="0"
-              className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-yellow-500 outline-none transition-all airport-font"
+              className="w-full bg-[#020617]/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500/50 outline-none transition-all airport-font placeholder:text-slate-700"
             />
           </div>
 
@@ -398,7 +398,7 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
                 const unit = units.find(u => u.id === e.target.value);
                 setForm({...form, unitId: e.target.value, unit: unit?.name || ''})
               }}
-              className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-yellow-500 outline-none transition-all appearance-none"
+              className="w-full bg-[#020617]/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500/50 outline-none transition-all appearance-none"
             >
               <option value="">Selecione a Unidade...</option>
               {units.map(u => (
@@ -426,8 +426,8 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
         </form>
       </div>
 
-      <div className="bg-[#020617] rounded-2xl border border-slate-800 overflow-hidden shadow-2xl">
-        <div className="p-4 border-b border-slate-800 bg-slate-900/50 flex items-center justify-between">
+      <div className="bg-gradient-to-br from-[#0f172a]/60 to-[#020617]/80 backdrop-blur-xl rounded-3xl border border-slate-800/80 overflow-hidden shadow-2xl">
+        <div className="p-5 border-b border-white/5 bg-white/5 flex items-center justify-between">
           <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Cargas Cadastradas no Sistema</p>
           <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full font-black">{cargos.length}</span>
         </div>
@@ -447,7 +447,7 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
                 const effectiveStatus = getEffectiveStatus(cargo);
 
                 return (
-                  <div key={cargo.id} className="bg-slate-900/40 border border-slate-800 p-5 rounded-xl hover:bg-slate-900/60 transition-colors flex flex-col justify-between">
+                  <div key={cargo.id} className="group bg-[#020617]/40 border border-slate-800 hover:border-slate-700 p-6 rounded-2xl hover:bg-slate-800/40 hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
                     <div className="space-y-4">
                       <div className="flex justify-between items-start">
                         <div>

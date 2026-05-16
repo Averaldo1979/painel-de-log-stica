@@ -91,7 +91,7 @@ export const UsersScreen: React.FC<UsersScreenProps> = ({ users, units, onAddUse
       </div>
 
       {editingId ? (
-        <div className="bg-[#0f172a] border border-yellow-500/30 rounded-2xl p-6 shadow-2xl">
+        <div className="bg-gradient-to-br from-[#0f172a]/80 to-[#020617] border border-slate-800 backdrop-blur-xl rounded-3xl p-8 shadow-2xl">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
             <div className="space-y-2">
               <label className="text-[9px] font-black uppercase text-slate-500 tracking-[0.2em]">Nome Completo</label>
@@ -99,7 +99,7 @@ export const UsersScreen: React.FC<UsersScreenProps> = ({ users, units, onAddUse
                 type="text"
                 value={formData.name || ''}
                 onChange={e => setFormData({ ...formData, name: e.target.value })}
-                className="w-full bg-[#020617] border border-slate-800 text-white rounded-xl px-4 py-3 outline-none focus:border-yellow-500/50 transition-all text-sm font-bold placeholder-slate-700"
+                className="w-full bg-[#020617]/50 border border-slate-800 text-white rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-sky-500/50 transition-all text-sm font-bold placeholder-slate-700"
                 placeholder="Ex: João Silva"
               />
             </div>
@@ -110,7 +110,7 @@ export const UsersScreen: React.FC<UsersScreenProps> = ({ users, units, onAddUse
                 type="email"
                 value={formData.email || ''}
                 onChange={e => setFormData({ ...formData, email: e.target.value })}
-                className="w-full bg-[#020617] border border-slate-800 text-white rounded-xl px-4 py-3 outline-none focus:border-yellow-500/50 transition-all text-sm font-bold placeholder-slate-700"
+                className="w-full bg-[#020617]/50 border border-slate-800 text-white rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-sky-500/50 transition-all text-sm font-bold placeholder-slate-700"
                 placeholder="email@empresa.com"
               />
             </div>
@@ -121,7 +121,7 @@ export const UsersScreen: React.FC<UsersScreenProps> = ({ users, units, onAddUse
                 type="password"
                 value={formData.password || ''}
                 onChange={e => setFormData({ ...formData, password: e.target.value })}
-                className="w-full bg-[#020617] border border-slate-800 text-white rounded-xl px-4 py-3 outline-none focus:border-yellow-500/50 transition-all text-sm font-bold placeholder-slate-700"
+                className="w-full bg-[#020617]/50 border border-slate-800 text-white rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-sky-500/50 transition-all text-sm font-bold placeholder-slate-700"
                 placeholder="Deixar vazio p/ não alterar"
               />
             </div>
@@ -131,7 +131,7 @@ export const UsersScreen: React.FC<UsersScreenProps> = ({ users, units, onAddUse
               <select
                 value={formData.role || 'USER'}
                 onChange={e => setFormData({ ...formData, role: e.target.value as 'ADMIN' | 'USER' })}
-                className="w-full bg-[#020617] border border-slate-800 text-white rounded-xl px-4 py-3 outline-none focus:border-yellow-500/50 transition-all text-sm font-bold uppercase"
+                className="w-full bg-[#020617]/50 border border-slate-800 text-white rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-sky-500/50 transition-all text-sm font-bold uppercase appearance-none"
               >
                 <option value="USER">Usuário Padrão</option>
                 <option value="ADMIN">Administrador</option>
@@ -227,9 +227,9 @@ export const UsersScreen: React.FC<UsersScreenProps> = ({ users, units, onAddUse
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {users.map(user => (
-            <div key={user.id} className="bg-[#0f172a] border border-slate-800 p-6 rounded-2xl hover:border-slate-700 transition-all flex flex-col group">
+            <div key={user.id} className="bg-gradient-to-br from-[#0f172a]/80 to-[#020617] backdrop-blur-xl border border-slate-800/80 p-6 rounded-3xl hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 flex flex-col group">
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <div className="text-white font-black text-lg truncate" title={user.name}>{user.name}</div>

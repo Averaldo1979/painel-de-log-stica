@@ -33,7 +33,7 @@ export const TeamManager: React.FC<TeamManagerProps> = ({ teams, units, onAdd, o
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-      <div className="bg-[#1e293b] p-8 rounded-2xl border border-slate-700 shadow-xl">
+      <div className="bg-gradient-to-br from-[#0f172a]/80 to-[#020617] backdrop-blur-xl p-8 rounded-3xl border border-slate-800 shadow-2xl">
         <h3 className="text-xl font-bold mb-8 text-white flex items-center gap-3 uppercase tracking-widest">
           <Users size={24} className="text-yellow-500" />
           {isEditing ? 'Editar Equipe' : 'Cadastro de Equipes'}
@@ -47,7 +47,7 @@ export const TeamManager: React.FC<TeamManagerProps> = ({ teams, units, onAdd, o
               value={form.number}
               onChange={e => setForm({...form, number: e.target.value})}
               placeholder="Ex: 001"
-              className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-yellow-500 outline-none transition-all airport-font"
+              className="w-full bg-[#020617]/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-sky-500/50 outline-none transition-all placeholder:text-slate-700 airport-font"
             />
           </div>
           <div className="space-y-2">
@@ -56,7 +56,7 @@ export const TeamManager: React.FC<TeamManagerProps> = ({ teams, units, onAdd, o
               required
               value={form.unitId}
               onChange={e => setForm({...form, unitId: e.target.value})}
-              className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-yellow-500 outline-none transition-all appearance-none"
+              className="w-full bg-[#020617]/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-sky-500/50 outline-none transition-all appearance-none"
             >
               <option value="">Selecione a Unidade...</option>
               {units.map(u => (
@@ -85,7 +85,11 @@ export const TeamManager: React.FC<TeamManagerProps> = ({ teams, units, onAdd, o
         </form>
       </div>
 
-      <div className="bg-[#020617] rounded-2xl border border-slate-800 overflow-hidden shadow-2xl">
+      <div className="bg-gradient-to-br from-[#0f172a]/60 to-[#020617]/80 backdrop-blur-xl rounded-3xl border border-slate-800/80 overflow-hidden shadow-2xl">
+        <div className="p-5 border-b border-white/5 bg-white/5 flex items-center justify-between">
+          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Equipes Cadastradas</span>
+          <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full font-black">{teams.length}</span>
+        </div>
         <table className="w-full text-left airport-font">
           <thead>
             <tr className="bg-slate-900/80 text-slate-500 text-[10px] uppercase tracking-widest border-b border-slate-800">
@@ -94,7 +98,7 @@ export const TeamManager: React.FC<TeamManagerProps> = ({ teams, units, onAdd, o
               <th className="px-6 py-4 text-right">Ações</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800">
+          <tbody className="divide-y divide-slate-800/50">
             {teams.length === 0 ? (
               <tr>
                 <td colSpan={3} className="px-6 py-12 text-center text-slate-600 uppercase font-bold text-xs tracking-widest">Nenhuma equipe cadastrada</td>

@@ -111,36 +111,39 @@ export const Layout: React.FC<LayoutProps> = ({ children, view, setView, onReset
             fixed inset-y-0 left-0 z-50 w-72 bg-[#0f172a] border-r border-slate-800/50 transition-all duration-300 lg:translate-x-0 lg:static
             ${isSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'}
           `}>
-        <div className="h-full flex flex-col">
-          <div className="p-8 border-b border-slate-800/50 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-yellow-500 rounded-2xl text-slate-950 shadow-[0_0_25px_rgba(234,179,8,0.2)]">
+        <div className="h-full flex flex-col bg-gradient-to-b from-[#020617] to-[#0f172a]/80">
+          <div className="p-8 border-b border-white/5 flex items-center justify-between relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+            <div className="flex items-center gap-4 relative z-10">
+              <div className="p-3 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-2xl text-slate-950 shadow-[0_0_30px_rgba(234,179,8,0.3)]">
                 <Radio size={22} strokeWidth={3} className="animate-pulse" />
               </div>
               <div className="flex flex-col">
-                <span className="text-[10px] font-black tracking-[0.2em] uppercase text-white leading-none">Cargo</span>
-                <span className="text-sm font-black text-yellow-500 uppercase tracking-tighter leading-none mt-1">Transportation</span>
+                <span className="text-[10px] font-black tracking-[0.2em] uppercase text-white/70 leading-none">Cargo</span>
+                <span className="text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-200 uppercase tracking-tighter leading-none mt-1">Transportation</span>
               </div>
             </div>
-            <button className="lg:hidden p-2 text-slate-500 hover:text-white transition-colors" onClick={() => setIsSidebarOpen(false)}>
+            <button className="lg:hidden p-2 text-slate-500 hover:text-white hover:bg-white/5 rounded-xl transition-all" onClick={() => setIsSidebarOpen(false)}>
               <X size={20} />
             </button>
           </div>
 
-          <nav className="p-6 space-y-1.5">
-            <p className="px-3 mb-4 text-[10px] font-black text-slate-600 uppercase tracking-[0.3em]">Operações Principais</p>
+          <nav className="p-6 space-y-2">
+            <p className="px-3 mb-4 text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Operações Principais</p>
             {navItems.map(item => (
               <button
                 key={item.id}
                 onClick={() => { setView(item.id); setIsSidebarOpen(false); }}
                 className={`
-                  w-full flex items-center gap-3 px-4 py-4 rounded-2xl text-xs font-black uppercase transition-all duration-200
+                  w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-xs font-black uppercase transition-all duration-300 group
                   ${view === item.id 
-                    ? 'bg-yellow-500 text-slate-950 shadow-[0_8px_20px_rgba(234,179,8,0.2)] scale-[1.02]' 
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent hover:border-slate-800'}
+                    ? 'bg-gradient-to-r from-yellow-500/20 to-transparent text-yellow-500 border border-yellow-500/20 shadow-[0_0_15px_rgba(234,179,8,0.1)]' 
+                    : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'}
                 `}
               >
-                {item.icon}
+                <div className={`transition-transform duration-300 ${view === item.id ? 'scale-110' : 'group-hover:scale-110 group-hover:text-yellow-500'}`}>
+                  {item.icon}
+                </div>
                 {item.label}
               </button>
             ))}

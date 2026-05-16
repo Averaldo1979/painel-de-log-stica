@@ -207,7 +207,7 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
 
       {/* Filtros */}
       {!isTvMode && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-[#1e293b] p-4 rounded-xl border border-slate-700">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-gradient-to-br from-[#0f172a]/80 to-[#020617] p-5 rounded-3xl border border-slate-800/80 shadow-2xl backdrop-blur-xl">
           <div className="space-y-1">
             <label className="text-[9px] font-black uppercase text-slate-500 tracking-widest flex items-center gap-2">
               <Building2 size={12} /> Unidade
@@ -215,7 +215,7 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
             <select 
               value={filterUnitId}
               onChange={(e) => setFilterUnitId(e.target.value)}
-              className="w-full bg-[#0f172a] border border-slate-800 text-white rounded-lg py-2 px-3 outline-none focus:border-yellow-500/50 transition-all text-xs font-black uppercase appearance-none"
+              className="w-full bg-[#020617]/50 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500/50 transition-all text-xs font-black uppercase appearance-none"
             >
               <option value="">Todas</option>
               {units.map(u => (
@@ -231,7 +231,7 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
             <select 
               value={filterTeamId}
               onChange={(e) => setFilterTeamId(e.target.value)}
-              className="w-full bg-[#0f172a] border border-slate-800 text-white rounded-lg py-2 px-3 outline-none focus:border-yellow-500/50 transition-all text-xs font-black uppercase appearance-none"
+              className="w-full bg-[#020617]/50 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500/50 transition-all text-xs font-black uppercase appearance-none"
             >
               <option value="">Todas</option>
               {teams.map(t => (
@@ -248,14 +248,14 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
               type="date"
               value={filterSlaughterDate}
               onChange={(e) => setFilterSlaughterDate(e.target.value)}
-              className="w-full bg-[#0f172a] border border-slate-800 text-white rounded-lg py-2 px-3 outline-none focus:border-yellow-500/50 transition-all text-xs font-black uppercase"
+              className="w-full bg-[#020617]/50 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500/50 transition-all text-xs font-black uppercase"
             />
           </div>
 
           <div className="flex items-end">
             <button 
               onClick={clearFilters}
-              className="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-lg text-[10px] font-black uppercase transition-all flex items-center justify-center gap-2 border border-slate-700 hover:border-slate-600"
+              className="w-full py-2.5 bg-[#020617] hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl text-[10px] font-black uppercase transition-all flex items-center justify-center gap-2 border border-slate-800 hover:border-slate-700"
             >
               <XCircle size={14} /> Limpar
             </button>
@@ -264,7 +264,7 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
       )}
 
       {/* Grid de Voos */}
-      <div className="bg-[#020617]">
+      <div className="bg-transparent">
         {filteredAndSortedCargos.length === 0 ? (
           <div className="rounded-2xl border border-slate-800 shadow-2xl py-20 text-center text-slate-700">
             <div className="flex flex-col items-center gap-3">
@@ -288,7 +288,7 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
                   <div className="flex items-end h-full">
                     {/* Trailer */}
                     <div 
-                      className={`relative z-10 flex-1 w-full bg-gradient-to-br from-[#0f172a] to-[#1e293b] border-y border-l border-r border-slate-700/80 rounded-l-2xl rounded-tr-md p-5 flex flex-col justify-between
+                      className={`relative z-10 flex-1 w-full bg-gradient-to-br from-[#0f172a]/90 to-[#1e293b]/90 backdrop-blur-md border-y border-l border-white/5 rounded-l-3xl rounded-tr-md p-6 flex flex-col justify-between
                         ${isDelayed ? 'border-red-500 shadow-[0_0_30px_rgba(239,68,68,0.3)] row-atrasado-blink' : ''} 
                         ${isLoading ? 'border-yellow-500 shadow-[0_0_30px_rgba(234,179,8,0.3)] row-carregando-blink' : 'shadow-xl'}`}
                     >
@@ -409,7 +409,7 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
                     </div>
 
                     {/* Cabin */}
-                    <div className={`w-14 sm:w-20 h-36 bg-gradient-to-b from-[#1e293b] to-[#0f172a] border-y border-r border-slate-700/80 rounded-r-3xl relative z-0 flex flex-col justify-start pb-4 shrink-0 shadow-lg transition-all duration-300 ${isLoading ? 'border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.2)]' : isDelayed ? 'border-red-500/50' : 'group-hover:border-slate-500'}`}>
+                    <div className={`w-14 sm:w-20 h-36 bg-gradient-to-b from-[#1e293b]/90 to-[#0f172a]/90 backdrop-blur-md border-y border-r border-white/5 rounded-r-[32px] relative z-0 flex flex-col justify-start pb-4 shrink-0 shadow-lg transition-all duration-300 ${isLoading ? 'border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.2)]' : isDelayed ? 'border-red-500/50' : 'group-hover:border-slate-500/50'}`}>
                        {/* Window */}
                        <div className="mt-4 ml-1 mr-2 h-14 bg-gradient-to-br from-sky-400/40 to-sky-600/20 border border-sky-400/30 rounded-tr-2xl rounded-bl-md flex items-center justify-center relative overflow-hidden">
                           {/* Glare effect */}

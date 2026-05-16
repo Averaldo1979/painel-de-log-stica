@@ -107,10 +107,10 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ cargos, teams,
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-[#0f172a]/40 border border-sky-500/20 rounded-2xl p-6 shadow-2xl relative overflow-hidden group transition-all duration-500">
-          <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
-            <Calendar size={64} className="text-sky-500" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-gradient-to-br from-[#0f172a]/80 to-[#020617] backdrop-blur-xl border border-sky-500/20 rounded-3xl p-6 shadow-2xl shadow-sky-500/5 relative overflow-hidden group hover:-translate-y-1 hover:shadow-sky-500/10 transition-all duration-300">
+          <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 group-hover:opacity-10 transition-all duration-500">
+            <Calendar size={80} className="text-sky-500" />
           </div>
           <p className="text-[10px] font-black uppercase text-sky-500 tracking-[0.2em] mb-2">Programado</p>
           <div className="flex items-baseline gap-2 mb-3">
@@ -126,9 +126,9 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ cargos, teams,
           </div>
         </div>
 
-        <div className="bg-[#0f172a]/40 border border-emerald-500/20 rounded-2xl p-6 shadow-2xl relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
-            <CheckCircle size={64} className="text-emerald-500" />
+        <div className="bg-gradient-to-br from-[#0f172a]/80 to-[#020617] backdrop-blur-xl border border-emerald-500/20 rounded-3xl p-6 shadow-2xl shadow-emerald-500/5 relative overflow-hidden group hover:-translate-y-1 hover:shadow-emerald-500/10 transition-all duration-300">
+          <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 group-hover:opacity-10 transition-all duration-500">
+            <CheckCircle size={80} className="text-emerald-500" />
           </div>
           <p className="text-[10px] font-black uppercase text-emerald-500 tracking-[0.2em] mb-2">Completados</p>
           <div className="flex items-baseline gap-2 mb-3">
@@ -143,9 +143,9 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ cargos, teams,
           </div>
         </div>
 
-        <div className="bg-[#0f172a]/40 border border-yellow-500/20 rounded-2xl p-6 shadow-2xl relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
-            <Zap size={64} className="text-yellow-500" />
+        <div className="bg-gradient-to-br from-[#0f172a]/80 to-[#020617] backdrop-blur-xl border border-yellow-500/20 rounded-3xl p-6 shadow-2xl shadow-yellow-500/5 relative overflow-hidden group hover:-translate-y-1 hover:shadow-yellow-500/10 transition-all duration-300">
+          <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 group-hover:opacity-10 transition-all duration-500">
+            <Zap size={80} className="text-yellow-500" />
           </div>
           <p className="text-[10px] font-black uppercase text-yellow-500 tracking-[0.2em] mb-2">Em Execução</p>
           <div className="flex items-baseline gap-2 mb-3">
@@ -160,9 +160,9 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ cargos, teams,
           </div>
         </div>
 
-        <div className="bg-[#0f172a]/40 border border-red-500/40 bg-red-500/5 rounded-2xl p-6 shadow-2xl relative overflow-hidden group transition-all duration-500">
-          <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
-            <AlertCircle size={64} className="text-red-500" />
+        <div className="bg-gradient-to-br from-red-500/10 to-[#020617] backdrop-blur-xl border border-red-500/30 rounded-3xl p-6 shadow-2xl shadow-red-500/10 relative overflow-hidden group hover:-translate-y-1 hover:shadow-red-500/20 transition-all duration-300">
+          <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 group-hover:opacity-10 transition-all duration-500">
+            <AlertCircle size={80} className="text-red-500" />
           </div>
           <p className="text-[10px] font-black uppercase text-red-500 tracking-[0.2em] mb-2">Atrasados</p>
           <div className="flex items-baseline gap-2 mb-3">
@@ -227,9 +227,9 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ cargos, teams,
             </div>
           </div>
         ) : (
-          <div className="rounded-2xl border border-slate-800 shadow-2xl bg-[#020617] overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left airport-font min-w-[1000px]">
+          <div className="rounded-3xl border border-slate-800/60 shadow-2xl shadow-black/50 bg-[#0f172a]/40 backdrop-blur-md overflow-hidden">
+            <div className="overflow-x-auto custom-scrollbar">
+              <table className="w-full text-left airport-font min-w-[1000px] border-collapse">
                 <thead>
                   <tr className="bg-slate-900/60 text-slate-500 text-[10px] uppercase font-black tracking-[0.2em] border-b border-slate-800">
                     <th className="px-6 py-4">Estado</th>
@@ -244,7 +244,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ cargos, teams,
                     <th className="px-6 py-4 text-center">Quant/Peso</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800">
+                <tbody className="divide-y divide-slate-800/50">
                   {filteredCargos.map((cargo) => {
                     const pickup = formatDateTime(cargo.pickupTime);
                     const slaughter = formatDateTime(cargo.slaughterTime);

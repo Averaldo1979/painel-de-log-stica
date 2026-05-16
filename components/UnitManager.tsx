@@ -38,7 +38,7 @@ export const UnitManager: React.FC<UnitManagerProps> = ({ units, onAdd, onUpdate
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-      <div className="bg-[#1e293b] p-8 rounded-2xl border border-slate-700 shadow-xl">
+      <div className="bg-gradient-to-br from-[#0f172a]/80 to-[#020617] backdrop-blur-xl p-8 rounded-3xl border border-slate-800 shadow-2xl">
         <h3 className="text-xl font-bold mb-8 text-white flex items-center gap-3 uppercase tracking-widest">
           <Building2 size={24} className="text-yellow-500" />
           {isEditing ? 'Editar Unidade' : 'Cadastro de Unidades'}
@@ -52,7 +52,7 @@ export const UnitManager: React.FC<UnitManagerProps> = ({ units, onAdd, onUpdate
               value={form.name}
               onChange={e => setForm({ name: e.target.value })}
               placeholder="Ex: Unidade Industrial 01 ou Unidade B"
-              className="w-full bg-[#0f172a] border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-yellow-500 outline-none transition-all"
+              className="w-full bg-[#020617]/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-sky-500/50 outline-none transition-all placeholder:text-slate-700"
             />
           </div>
           <div className="flex justify-end gap-3 mt-4 pt-6 border-t border-slate-700/50">
@@ -76,7 +76,7 @@ export const UnitManager: React.FC<UnitManagerProps> = ({ units, onAdd, onUpdate
         </form>
       </div>
 
-      <div className="bg-[#020617] rounded-2xl border border-slate-800 overflow-hidden shadow-2xl">
+      <div className="bg-gradient-to-br from-[#0f172a]/60 to-[#020617]/80 backdrop-blur-xl rounded-3xl border border-slate-800/80 overflow-hidden shadow-2xl">
         <table className="w-full text-left airport-font">
           <thead>
             <tr className="bg-slate-900/80 text-slate-500 text-[10px] uppercase tracking-widest border-b border-slate-800">
