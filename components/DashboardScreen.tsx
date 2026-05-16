@@ -239,6 +239,8 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ cargos, teams,
                     <th className="px-6 py-4 text-center">Origem</th>
                     <th className="px-6 py-4 text-center">Apanha</th>
                     <th className="px-6 py-4 text-center">Abate</th>
+                    <th className="px-6 py-4 text-center">Início Real</th>
+                    <th className="px-6 py-4 text-center">Fim Real</th>
                     <th className="px-6 py-4 text-center">Quant/Peso</th>
                   </tr>
                 </thead>
@@ -295,6 +297,16 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ cargos, teams,
                         <td className="px-6 py-4 text-center">
                           <div className="font-black text-lg text-yellow-500/80 leading-none">
                             {slaughter.time}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-center">
+                          <div className="font-black text-sky-400 text-sm leading-none whitespace-nowrap">
+                            {cargo.horario_inicio ? new Date(cargo.horario_inicio).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(',', '') : '--:--'}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-center">
+                          <div className="font-black text-emerald-400 text-sm leading-none whitespace-nowrap">
+                            {cargo.horario_fim ? new Date(cargo.horario_fim).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(',', '') : '--:--'}
                           </div>
                         </td>
                         <td className="px-6 py-4 text-center">
