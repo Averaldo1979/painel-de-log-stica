@@ -48,4 +48,5 @@ export interface User {
   role: 'ADMIN' | 'USER';
   allowedMenus: ViewMode[];
   allowedUnits?: string[];
+  allowedTeams?: string[];
 }

@@ -22,7 +22,7 @@ const HEADERS = {
     'city', 'pickupTime', 'birdCount', 'totalLoad', 'unitId', 'unit',
     'status', 'startTime', 'endTime', 'endDate', 'horario_inicio', 'horario_fim'
   ],
-  users: ['id', 'name', 'email', 'password', 'role', 'allowedMenus', 'allowedUnits']
+  users: ['id', 'name', 'email', 'password', 'role', 'allowedMenus', 'allowedUnits', 'allowedTeams']
 };
 
 // ---------------------------------------------------------------
@@ -138,7 +138,7 @@ function getAll(entity) {
       const obj = {};
       headers.forEach((h, i) => {
         let val = row[i] === '' ? undefined : row[i];
-        if (h === 'allowedMenus' || h === 'allowedUnits') {
+        if (h === 'allowedMenus' || h === 'allowedUnits' || h === 'allowedTeams') {
           try {
             val = val ? JSON.parse(val) : [];
           } catch(e) {
@@ -156,7 +156,7 @@ function createRecord(entity, data) {
   const headers = HEADERS[entity];
   const row = headers.map(h => {
     let val = data[h];
-    if (h === 'allowedMenus' || h === 'allowedUnits') {
+    if (h === 'allowedMenus' || h === 'allowedUnits' || h === 'allowedTeams') {
       val = val ? JSON.stringify(val) : '[]';
     }
     return val === undefined || val === null ? '' : val;
@@ -178,7 +178,7 @@ function updateRecord(entity, id, data) {
   const sheetRow = rowIndex + 2;
   const row = headers.map(h => {
     let val = data[h];
-    if (h === 'allowedMenus' || h === 'allowedUnits') {
+    if (h === 'allowedMenus' || h === 'allowedUnits' || h === 'allowedTeams') {
       val = val ? JSON.stringify(val) : '[]';
     }
     return val === undefined || val === null ? '' : val;
@@ -213,7 +213,7 @@ function replaceAll(entity, dataArray) {
     const rows = dataArray.map(item =>
       headers.map(h => {
         let val = item[h];
-        if (h === 'allowedMenus' || h === 'allowedUnits') {
+        if (h === 'allowedMenus' || h === 'allowedUnits' || h === 'allowedTeams') {
           val = val ? JSON.stringify(val) : '[]';
         }
         return val === undefined || val === null ? '' : val;

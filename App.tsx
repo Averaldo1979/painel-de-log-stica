@@ -456,13 +456,25 @@ const App: React.FC = () => {
   };
 
   // ----------------------------------------------------------------
-  // Filtros por unidade permitida
+  // Filtros por unidade e equipe permitida
   // ----------------------------------------------------------------
   const isAdmin = currentUser?.role === 'ADMIN';
-  const noFilter = !currentUser?.allowedUnits || currentUser.allowedUnits.length === 0;
-  const filteredUnits  = isAdmin || noFilter ? units  : units.filter(u  => currentUser.allowedUnits!.includes(u.id));
-  const filteredTeams  = isAdmin || noFilter ? teams  : teams.filter(t  => currentUser.allowedUnits!.includes(t.unitId));
-  const filteredCargos = isAdmin || noFilter ? cargos : cargos.filter(c => currentUser.allowedUnits!.includes(c.unitId));
+  const noUnitFilter = !currentUser?.allowedUnits || currentUser.allowedUnits.length === 0;
+  const noTeamFilter = !currentUser?.allowedTeams || currentUser.allowedTeams.length === 0;
+
+  const filteredUnits = isAdmin || noUnitFilter ? units : units.filter(u => currentUser.allowedUnits!.includes(u.id));
+
+  const filteredTeams = isAdmin ? teams : teams.filter(t => {
+    const unitPass = noUnitFilter || currentUser.allowedUnits!.includes(t.unitId);
+    const teamPass = noTeamFilter || currentUser.allowedTeams!.includes(t.id);
+    return unitPass && teamPass;
+  });
+
+  const filteredCargos = isAdmin ? cargos : cargos.filter(c => {
+    const unitPass = noUnitFilter || currentUser.allowedUnits!.includes(c.unitId);
+    const teamPass = noTeamFilter || currentUser.allowedTeams!.includes(c.teamId);
+    return unitPass && teamPass;
+  });
 
   return (
     <Layout
@@ -516,7 +528,7 @@ const App: React.FC = () => {
         <TeamManager teams={filteredTeams} units={filteredUnits} onAdd={addTeam} onUpdate={updateTeam} onDelete={deleteTeam} />
       )}
       {view === 'USERS' && (
-        <UsersScreen users={users} units={units} onAddUser={addUser} onUpdateUser={updateUser} onDeleteUser={deleteUser} />
+        <UsersScreen users={users} units={units} teams={teams} onAddUser={addUser} onUpdateUser={updateUser} onDeleteUser={deleteUser} />
       )}
       {view === 'CARGO_ENTRY' && (
         <CargoManager

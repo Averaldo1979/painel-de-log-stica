@@ -5,6 +5,7 @@ import { Plus, Edit2, Trash2, Shield, LayoutDashboard, Truck, Users, Building2, 
 interface UsersScreenProps {
   users: User[];
   units: Unit[];
+  teams: Team[];
   onAddUser: (user: Omit<User, 'id'>) => void;
   onUpdateUser: (id: string, user: Partial<User>) => void;
   onDeleteUser: (id: string) => void;
@@ -20,7 +21,7 @@ const MENU_OPTIONS: { id: ViewMode; label: string }[] = [
   { id: 'TV_PANEL', label: 'Painel de TV' }
 ];
 
-export const UsersScreen: React.FC<UsersScreenProps> = ({ users, units, onAddUser, onUpdateUser, onDeleteUser }) => {
+export const UsersScreen: React.FC<UsersScreenProps> = ({ users, units, teams, onAddUser, onUpdateUser, onDeleteUser }) => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<User>>({});
 
@@ -39,7 +40,8 @@ export const UsersScreen: React.FC<UsersScreenProps> = ({ users, units, onAddUse
         password: formData.password || '',
         role: formData.role as 'ADMIN' | 'USER',
         allowedMenus: formData.allowedMenus || [],
-        allowedUnits: formData.allowedUnits || []
+        allowedUnits: formData.allowedUnits || [],
+        allowedTeams: formData.allowedTeams || []
       });
     } else if (editingId) {
       onUpdateUser(editingId, formData);
@@ -64,6 +66,15 @@ export const UsersScreen: React.FC<UsersScreenProps> = ({ users, units, onAddUse
       setFormData({ ...formData, allowedUnits: currentUnits.filter(u => u !== unitId) });
     } else {
       setFormData({ ...formData, allowedUnits: [...currentUnits, unitId] });
+    }
+  };
+
+  const toggleTeamPermission = (teamId: string) => {
+    const currentTeams = formData.allowedTeams || [];
+    if (currentTeams.includes(teamId)) {
+      setFormData({ ...formData, allowedTeams: currentTeams.filter(t => t !== teamId) });
+    } else {
+      setFormData({ ...formData, allowedTeams: [...currentTeams, teamId] });
     }
   };
 
@@ -140,7 +151,8 @@ export const UsersScreen: React.FC<UsersScreenProps> = ({ users, units, onAddUse
           </div>
 
           {formData.role !== 'ADMIN' && (
-            <div className="space-y-4 mb-8">
+            <>
+              <div className="space-y-4 mb-8">
               <label className="text-[9px] font-black uppercase text-slate-500 tracking-[0.2em]">Unidades Permitidas</label>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                 {units.map(unit => {
@@ -171,6 +183,46 @@ export const UsersScreen: React.FC<UsersScreenProps> = ({ users, units, onAddUse
                 )}
               </div>
             </div>
+
+            <div className="space-y-4 mb-8">
+              <label className="text-[9px] font-black uppercase text-slate-500 tracking-[0.2em]">Equipes Permitidas</label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                {teams.map(team => {
+                  const isActive = (formData.allowedTeams || []).includes(team.id);
+                  // Opcional: só mostrar equipes das unidades selecionadas (se houver alguma selecionada)
+                  const isUnitSelected = formData.allowedUnits && formData.allowedUnits.length > 0;
+                  if (isUnitSelected && !formData.allowedUnits!.includes(team.unitId)) return null;
+
+                  return (
+                    <button
+                      key={team.id}
+                      onClick={() => toggleTeamPermission(team.id)}
+                      className={`flex items-center gap-3 p-3 rounded-xl border text-left transition-all ${
+                        isActive 
+                          ? 'bg-sky-500/10 border-sky-500/50 text-sky-500' 
+                          : 'bg-[#020617] border-slate-800 text-slate-500 hover:border-slate-700 hover:text-slate-300'
+                      }`}
+                    >
+                      <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${
+                        isActive ? 'bg-sky-500 border-sky-500 text-slate-900' : 'border-slate-700'
+                      }`}>
+                        {isActive && <Shield size={10} />}
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-xs font-black tracking-widest">EQP {team.number}</span>
+                        <span className="text-[8px] font-bold text-slate-500">{team.unit}</span>
+                      </div>
+                    </button>
+                  );
+                })}
+                {teams.length === 0 && (
+                  <div className="col-span-full py-4 text-center border border-dashed border-slate-800 rounded-xl relative">
+                     <span className="text-slate-500 text-[10px] uppercase font-bold tracking-widest">Nenhuma equipe cadastrada</span>
+                  </div>
+                )}
+              </div>
+            </div>
+            </>
           )}
 
           <div className="space-y-4 mb-8">
@@ -267,20 +319,39 @@ export const UsersScreen: React.FC<UsersScreenProps> = ({ users, units, onAddUse
                     )}
                   </div>
                   {user.role !== 'ADMIN' && (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                       <span className="text-[9px] font-black uppercase text-slate-600 tracking-[0.2em] w-full mb-1">Unidades:</span>
-                       {user.allowedUnits && user.allowedUnits.length > 0 ? (
-                         user.allowedUnits.map(unitId => {
-                           const unitName = units.find(u => u.id === unitId)?.name || 'Desconhecida';
-                           return (
-                             <span key={unitId} className="px-2 py-1 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-[8px] font-black uppercase rounded flex items-center gap-1">
-                               <Building2 size={10} /> {unitName}
-                             </span>
-                           );
-                         })
-                       ) : (
-                         <span className="text-xs text-slate-600 font-medium italic">Todas as unidades (sem restrição)</span>
-                       )}
+                    <div className="flex flex-col gap-2 mt-2">
+                       <div className="flex flex-wrap gap-2">
+                         <span className="text-[9px] font-black uppercase text-slate-600 tracking-[0.2em] w-full mb-1">Unidades:</span>
+                         {user.allowedUnits && user.allowedUnits.length > 0 ? (
+                           user.allowedUnits.map(unitId => {
+                             const unitName = units.find(u => u.id === unitId)?.name || 'Desconhecida';
+                             return (
+                               <span key={unitId} className="px-2 py-1 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-[8px] font-black uppercase rounded flex items-center gap-1">
+                                 <Building2 size={10} /> {unitName}
+                               </span>
+                             );
+                           })
+                         ) : (
+                           <span className="text-xs text-slate-600 font-medium italic">Todas as unidades</span>
+                         )}
+                       </div>
+                       
+                       <div className="flex flex-wrap gap-2 mt-2">
+                         <span className="text-[9px] font-black uppercase text-slate-600 tracking-[0.2em] w-full mb-1">Equipes:</span>
+                         {user.allowedTeams && user.allowedTeams.length > 0 ? (
+                           user.allowedTeams.map(teamId => {
+                             const team = teams.find(t => t.id === teamId);
+                             const teamName = team ? `EQP ${team.number}` : 'Desconhecida';
+                             return (
+                               <span key={teamId} className="px-2 py-1 bg-sky-500/10 border border-sky-500/20 text-sky-500 text-[8px] font-black uppercase rounded flex items-center gap-1">
+                                 <Users size={10} /> {teamName}
+                               </span>
+                             );
+                           })
+                         ) : (
+                           <span className="text-xs text-slate-600 font-medium italic">Todas as equipes</span>
+                         )}
+                       </div>
                     </div>
                   )}
                 </div>
