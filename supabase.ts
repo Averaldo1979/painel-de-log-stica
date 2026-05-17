@@ -17,4 +17,5 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
  *           integrated text, city text, pickup_time timestamp, bird_count int, 
  *           total_load int, unit_id uuid, unit_name text, status text, 
  *           start_time text, end_time text, end_date text)
+ * 4. users (id uuid, name text, email text, password text, role text, allowedMenus text[], allowedUnits text[])
  */

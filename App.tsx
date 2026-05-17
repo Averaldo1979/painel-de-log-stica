@@ -10,7 +10,7 @@ import { UsersScreen } from './components/UsersScreen';
 import { LoginScreen } from './components/LoginScreen';
 import { Team, Cargo, ViewMode, CargoStatus, Unit, User } from './types';
 import { Database, WifiOff, Wifi } from 'lucide-react';
-import { unitsApi, teamsApi, cargosApi, pingApi } from './sheetsApi';
+import { unitsApi, teamsApi, cargosApi, usersApi, pingApi } from './sheetsApi';
 import { useRealtimeSync } from './useRealtimeSync';
 
 // ── Diagnostic Logger ─────────────────────────────────────────
@@ -83,35 +83,71 @@ const App: React.FC = () => {
           }
         };
 
-        const [remoteUnits, remoteTeams, remoteCargos] = await Promise.all([
+        const [remoteUnits, remoteTeams, remoteCargos, remoteUsers] = await Promise.all([
           loadSafe<Unit>(unitsApi.getAll, 'units_v2'),
           loadSafe<Team>(teamsApi.getAll, 'teams_v2'),
           loadSafe<Cargo>(cargosApi.getAll, 'cargos_v2'),
+          loadSafe<User>(usersApi.getAll, USERS_KEY),
         ]);
 
         diagLog('LOAD_DATA ✓ remoto completo', {
           units: remoteUnits.length,
           teams: remoteTeams.length,
           cargos: remoteCargos.length,
+          users: remoteUsers.length,
         });
         setUnits(remoteUnits);
         setTeams(remoteTeams);
         setCargos(remoteCargos);
+        
+        let finalUsers = remoteUsers;
+        if (!finalUsers.some(u => u.role === 'ADMIN')) {
+          finalUsers = [{
+            id: generateId(),
+            name: 'Administrador',
+            email: 'admin@logistica.com',
+            password: 'admin',
+            role: 'ADMIN',
+            allowedMenus: ['DASHBOARD', 'CARGOS_LIST', 'CARGO_ENTRY', 'TEAMS', 'UNITS', 'USERS', 'TV_PANEL'],
+            allowedUnits: []
+          }, ...finalUsers];
+          // Se estamos online, já cria o admin no banco remoto
+          if (apiAvailable) {
+            try { await usersApi.create(finalUsers[0]); } catch(e) {}
+          }
+        }
+        setUsers(finalUsers);
       } else {
         // Sem API: carrega do localStorage (modo offline)
         diagLog('LOAD_DATA ⚠ offline — carregando localStorage');
         const savedUnits = localStorage.getItem('units_v2');
         const savedTeams = localStorage.getItem('teams_v2');
         const savedCargos = localStorage.getItem('cargos_v2');
+        const savedUsers = localStorage.getItem(USERS_KEY);
         diagLog('LOAD_DATA localStorage', {
           units: savedUnits ? JSON.parse(savedUnits).length : 'vazio',
           teams: savedTeams ? JSON.parse(savedTeams).length : 'vazio',
           cargos: savedCargos ? JSON.parse(savedCargos).length : 'vazio',
+          users: savedUsers ? JSON.parse(savedUsers).length : 'vazio',
         });
 
         if (savedUnits) setUnits(JSON.parse(savedUnits));
         if (savedTeams) setTeams(JSON.parse(savedTeams));
         if (savedCargos) setCargos(JSON.parse(savedCargos));
+        
+        let parsedUsers = savedUsers ? JSON.parse(savedUsers) : [];
+        if (!parsedUsers.some((u: User) => u.role === 'ADMIN')) {
+          parsedUsers.unshift({
+            id: generateId(),
+            name: 'Administrador',
+            email: 'admin@logistica.com',
+            password: 'admin',
+            role: 'ADMIN',
+            allowedMenus: ['DASHBOARD', 'CARGOS_LIST', 'CARGO_ENTRY', 'TEAMS', 'UNITS', 'USERS', 'TV_PANEL'],
+            allowedUnits: []
+          });
+        }
+        setUsers(parsedUsers);
 
         if (!import.meta.env.VITE_SHEETS_API_URL) {
           setSyncError('API não configurada. Configure VITE_SHEETS_API_URL no .env.local');
@@ -125,13 +161,13 @@ const App: React.FC = () => {
       const savedUnits = localStorage.getItem('units_v2');
       const savedTeams = localStorage.getItem('teams_v2');
       const savedCargos = localStorage.getItem('cargos_v2');
+      const savedUsers = localStorage.getItem(USERS_KEY);
       if (savedUnits) setUnits(JSON.parse(savedUnits));
       if (savedTeams) setTeams(JSON.parse(savedTeams));
       if (savedCargos) setCargos(JSON.parse(savedCargos));
+      if (savedUsers) setUsers(JSON.parse(savedUsers));
     }
 
-    diagLog('LOAD_DATA ✓ concluído — carregando usuários');
-    loadUsers();
     setIsSyncing(false);
     diagLog('LOAD_DATA ✓✓ pronto');
   }, []);
@@ -157,32 +193,6 @@ const App: React.FC = () => {
     enabled: !!currentUser,      // só quando logado
     onSync: loadData,
   });
-
-  // ----------------------------------------------------------------
-  // Usuários (localStorage, sem persistência remota para segurança)
-  // ----------------------------------------------------------------
-  const loadUsers = () => {
-    const savedUsers = localStorage.getItem(USERS_KEY);
-    let parsedUsers: User[] = savedUsers ? JSON.parse(savedUsers) : [];
-
-    const hasAdmin = parsedUsers.some(u => u.role === 'ADMIN');
-    if (!hasAdmin) {
-      parsedUsers.unshift({
-        id: generateId(),
-        name: 'Administrador',
-        email: 'admin@logistica.com',
-        password: 'admin',
-        role: 'ADMIN',
-        allowedMenus: ['DASHBOARD', 'CARGOS_LIST', 'CARGO_ENTRY', 'TEAMS', 'UNITS', 'USERS', 'TV_PANEL']
-      });
-    }
-    setUsers(parsedUsers);
-    return parsedUsers;
-  };
-
-  useEffect(() => {
-    if (users.length) localStorage.setItem(USERS_KEY, JSON.stringify(users));
-  }, [users]);
 
   // ----------------------------------------------------------------
   // LOGIN
@@ -399,23 +409,50 @@ const App: React.FC = () => {
   // USERS
   // ----------------------------------------------------------------
   const addUser = async (userData: Omit<User, 'id'>) => {
+    setIsSyncing(true);
     const newUser: User = { ...userData, id: generateId() };
-    setUsers(prev => [...prev, newUser]);
+    try {
+      if (isOnline) await usersApi.create(newUser);
+    } catch (e) { /* offline */ }
+    setUsers(prev => {
+      const next = [...prev, newUser];
+      localStorage.setItem(USERS_KEY, JSON.stringify(next));
+      return next;
+    });
     if (!currentUser) setCurrentUser(newUser);
+    setIsSyncing(false);
   };
 
   const updateUser = async (id: string, updated: Partial<User>) => {
+    setIsSyncing(true);
+    const userToUpdate = users.find(u => u.id === id);
+    if (!userToUpdate) { setIsSyncing(false); return; }
+    const merged: User = { ...userToUpdate, ...updated };
+    try {
+      if (isOnline) await usersApi.update(id, merged);
+    } catch (e) { /* offline */ }
     setUsers(prev => {
-      const next = prev.map(u => u.id === id ? { ...u, ...updated } : u);
-      if (currentUser?.id === id) setCurrentUser(next.find(u => u.id === id) || null);
+      const next = prev.map(u => u.id === id ? merged : u);
+      localStorage.setItem(USERS_KEY, JSON.stringify(next));
+      if (currentUser?.id === id) setCurrentUser(merged);
       return next;
     });
+    setIsSyncing(false);
   };
 
   const deleteUser = async (id: string) => {
     if (!window.confirm('Excluir este usuário?')) return;
-    setUsers(prev => prev.filter(u => u.id !== id));
+    setIsSyncing(true);
+    try {
+      if (isOnline) await usersApi.delete(id);
+    } catch (e) { /* offline */ }
+    setUsers(prev => {
+      const next = prev.filter(u => u.id !== id);
+      localStorage.setItem(USERS_KEY, JSON.stringify(next));
+      return next;
+    });
     if (currentUser?.id === id) setCurrentUser(null);
+    setIsSyncing(false);
   };
 
   // ----------------------------------------------------------------

@@ -6,7 +6,7 @@
 // "Aplicativo da Web" com acesso "Qualquer pessoa".
 // =============================================================
 
-import { Unit, Team, Cargo } from './types';
+import { Unit, Team, Cargo, User } from './types';
 
 // Leia a URL da variável de ambiente (configure no .env.local)
 const API_URL = import.meta.env.VITE_SHEETS_API_URL as string;
@@ -77,6 +77,17 @@ export const cargosApi = {
   delete: (id: string) => apiPost<void>({ action: 'delete', entity: 'cargos', id }),
   deleteAll: () => apiPost<void>({ action: 'deleteAll', entity: 'cargos', data: [] }),
   replaceAll: (data: Cargo[]) => apiPost<void>({ action: 'replaceAll', entity: 'cargos', data }),
+};
+
+// ---------------------------------------------------------------
+// USERS
+// ---------------------------------------------------------------
+export const usersApi = {
+  getAll: () => apiGet<User>('users'),
+  create: (data: User) => apiPost<User>({ action: 'create', entity: 'users', data }),
+  update: (id: string, data: User) => apiPost<User>({ action: 'update', entity: 'users', id, data }),
+  delete: (id: string) => apiPost<void>({ action: 'delete', entity: 'users', id }),
+  replaceAll: (data: User[]) => apiPost<void>({ action: 'replaceAll', entity: 'users', data }),
 };
 
 // ---------------------------------------------------------------

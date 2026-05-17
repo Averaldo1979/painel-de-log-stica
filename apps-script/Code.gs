@@ -9,7 +9,8 @@ const SHEET_ID = SpreadsheetApp.getActiveSpreadsheet().getId();
 const SHEETS = {
   units: 'units',
   teams: 'teams',
-  cargos: 'cargos'
+  cargos: 'cargos',
+  users: 'users'
 };
 
 // --- HEADERS de cada aba ---
@@ -20,7 +21,8 @@ const HEADERS = {
     'id', 'cargoNumber', 'slaughterTime', 'teamId', 'integrated',
     'city', 'pickupTime', 'birdCount', 'totalLoad', 'unitId', 'unit',
     'status', 'startTime', 'endTime', 'endDate', 'horario_inicio', 'horario_fim'
-  ]
+  ],
+  users: ['id', 'name', 'email', 'password', 'role', 'allowedMenus', 'allowedUnits']
 };
 
 // ---------------------------------------------------------------
@@ -135,7 +137,15 @@ function getAll(entity) {
     .map(row => {
       const obj = {};
       headers.forEach((h, i) => {
-        obj[h] = row[i] === '' ? undefined : row[i];
+        let val = row[i] === '' ? undefined : row[i];
+        if (h === 'allowedMenus' || h === 'allowedUnits') {
+          try {
+            val = val ? JSON.parse(val) : [];
+          } catch(e) {
+            val = [];
+          }
+        }
+        obj[h] = val;
       });
       return obj;
     });
@@ -145,7 +155,10 @@ function createRecord(entity, data) {
   const sheet = getSheet(entity);
   const headers = HEADERS[entity];
   const row = headers.map(h => {
-    const val = data[h];
+    let val = data[h];
+    if (h === 'allowedMenus' || h === 'allowedUnits') {
+      val = val ? JSON.stringify(val) : '[]';
+    }
     return val === undefined || val === null ? '' : val;
   });
   sheet.appendRow(row);
@@ -164,7 +177,10 @@ function updateRecord(entity, id, data) {
 
   const sheetRow = rowIndex + 2;
   const row = headers.map(h => {
-    const val = data[h];
+    let val = data[h];
+    if (h === 'allowedMenus' || h === 'allowedUnits') {
+      val = val ? JSON.stringify(val) : '[]';
+    }
     return val === undefined || val === null ? '' : val;
   });
   sheet.getRange(sheetRow, 1, 1, headers.length).setValues([row]);
@@ -196,7 +212,10 @@ function replaceAll(entity, dataArray) {
   if (dataArray.length > 0) {
     const rows = dataArray.map(item =>
       headers.map(h => {
-        const val = item[h];
+        let val = item[h];
+        if (h === 'allowedMenus' || h === 'allowedUnits') {
+          val = val ? JSON.stringify(val) : '[]';
+        }
         return val === undefined || val === null ? '' : val;
       })
     );
