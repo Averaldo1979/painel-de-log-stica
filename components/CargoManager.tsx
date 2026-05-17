@@ -120,9 +120,10 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
    * Retorna string no formato YYYY-MM-DDTHH:mm compatível com <input datetime-local>.
    */
   const parseCsvDate = (raw: string): string => {
+    if (!raw) return '';
     const trimmed = raw.trim();
-    // Formato Google Sheets: D/M/AA H:MM ou DD/MM/AA HH:MM
-    const sheetMatch = trimmed.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})\s+(\d{1,2}):(\d{2})$/);
+    // Formato Google Sheets ou BR: D/M/AA H:MM ou DD/MM/AAAA HH:MM:SS
+    const sheetMatch = trimmed.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})(?:\s+|T)(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
     if (sheetMatch) {
       const day   = sheetMatch[1].padStart(2, '0');
       const month = sheetMatch[2].padStart(2, '0');
@@ -132,8 +133,8 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
       const min   = sheetMatch[5];
       return `${year}-${month}-${day}T${hour}:${min}`;
     }
-    // Formato ISO (YYYY-MM-DDTHH:mm) — retorna como está
-    if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(trimmed)) return trimmed;
+    // Formato ISO (YYYY-MM-DDTHH:mm) — retorna apenas até os minutos
+    if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(trimmed)) return trimmed.substring(0, 16);
     return trimmed; // fallback
   };
 
@@ -194,18 +195,18 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
              */
 
             const cargoNum   = values[0] || (Math.floor(Math.random() * 90000) + 10000).toString();
-            const teamNum    = values[1];
-            const integrated = values[2];
-            const city       = values[3];
-            const pickup     = parseCsvDate(values[4]);
-            const birds      = parseInt(values[5].replace(/\D/g, '')) || 0;
-            const load       = parseInt(values[6].replace(/\D/g, '')) || 0;
+            const teamNum    = values[1] || '';
+            const integrated = values[2] || '';
+            const city       = values[3] || '';
+            const pickup     = parseCsvDate(values[4] || '');
+            const birds      = parseInt((values[5] || '').replace(/\D/g, '')) || 0;
+            const load       = parseInt((values[6] || '').replace(/\D/g, '')) || 0;
             const unitName   = values[7] || '';
             const slaughter  = values[8] ? parseCsvDate(values[8]) : pickup;
 
             // Busca a equipe exata
             const team = teams.find(t => 
-              t.number.trim() === teamNum.replace(/^EQP\s+/i, '')
+              t.number.trim() === teamNum.replace(/^EQP\s+/i, '').trim()
             );
 
             if (team) {
@@ -252,8 +253,8 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
   };
 
   const downloadTemplate = () => {
-    const header = "Nº Carga (ID Logístico),Equipe,Integrado,Cidade,Hora Apanha,Numero Aves,Total Carga,Unidade,Hora Abate\n";
-    const example = "1,401,Produtor Exemplo,Cidade Exemplo,15/5/26 8:00,5000,12500,UNIDADE A,15/5/26 14:30";
+    const header = "Nº Carga (ID Logístico);Equipe;Integrado;Cidade;Hora Apanha;Numero Aves;Total Carga;Unidade;Hora Abate\n";
+    const example = "1;401;Produtor Exemplo;Cidade Exemplo;15/05/2026 08:00;5000;12500;UNIDADE A;15/05/2026 14:30";
     const blob = new Blob(["\uFEFF" + header + example], { type: 'text/csv;charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
