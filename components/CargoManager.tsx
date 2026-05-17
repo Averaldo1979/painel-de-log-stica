@@ -204,9 +204,14 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
             const unitName   = values[7] || '';
             const slaughter  = values[8] ? parseCsvDate(values[8]) : pickup;
 
-            // Busca a equipe exata
+            // Busca a equipe exata, limpando o texto caso o usuário cole "EQP 401 (FRG-IO)" do dropdown
+            const cleanedTeamNum = teamNum
+              .replace(/^EQP\s+/i, '') // Remove o "EQP " do início
+              .replace(/\s*\(.*?\)$/, '') // Remove o " (UNIDADE)" do final
+              .trim();
+
             const team = teams.find(t => 
-              t.number.trim() === teamNum.replace(/^EQP\s+/i, '').trim()
+              t.number.trim() === cleanedTeamNum
             );
 
             if (team) {
