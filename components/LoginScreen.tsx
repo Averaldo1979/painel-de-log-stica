@@ -45,32 +45,42 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, error }) => {
             </div>
           )}
 
-          <div className="space-y-5 flex flex-col items-center">
-            <div className="w-full relative group">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-yellow-500 transition-colors">
-                <Mail size={16} />
+          <div className="space-y-6 flex flex-col items-center">
+            <div className="w-full space-y-2 group">
+              <label className="text-[9px] font-black uppercase text-slate-500 tracking-[0.2em] group-focus-within:text-yellow-500 transition-colors block">
+                E-mail de Acesso
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-yellow-500 transition-colors">
+                  <Mail size={16} />
+                </div>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="digite seu e-mail"
+                  className="w-full bg-[#020617]/90 border border-slate-800 text-white rounded-2xl py-4 pl-11 pr-4 outline-none focus:border-yellow-500 focus:ring-4 focus:ring-yellow-500/10 transition-all text-sm font-bold placeholder-slate-700 shadow-inner"
+                  required
+                />
               </div>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="E-mail de Acesso"
-                className="w-full bg-[#020617] border border-slate-800 text-white rounded-xl py-4 pl-11 pr-4 outline-none focus:border-yellow-500/50 transition-all text-sm font-bold placeholder-slate-600"
-                required
-              />
             </div>
 
-            <div className="w-full relative group">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-yellow-500 transition-colors">
-                <Lock size={16} />
+            <div className="w-full space-y-2 group">
+              <label className="text-[9px] font-black uppercase text-slate-500 tracking-[0.2em] group-focus-within:text-yellow-500 transition-colors block">
+                Senha de Acesso
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-yellow-500 transition-colors">
+                  <Lock size={16} />
+                </div>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="digite sua senha"
+                  className="w-full bg-[#020617]/90 border border-slate-800 text-white rounded-2xl py-4 pl-11 pr-4 outline-none focus:border-yellow-500 focus:ring-4 focus:ring-yellow-500/10 transition-all text-sm font-bold placeholder-slate-700 shadow-inner"
+                />
               </div>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Senha de Acesso"
-                className="w-full bg-[#020617] border border-slate-800 text-white rounded-xl py-4 pl-11 pr-4 outline-none focus:border-yellow-500/50 transition-all text-sm font-bold placeholder-slate-600"
-              />
             </div>
 
             <button
