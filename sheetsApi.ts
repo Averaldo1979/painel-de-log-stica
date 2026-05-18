@@ -11,6 +11,8 @@ import { Unit, Team, Cargo, User } from './types';
 // Leia a URL da variável de ambiente (configure no .env.local)
 const API_URL = import.meta.env.VITE_SHEETS_API_URL as string;
 
+import { enqueueAction, getSyncQueue, removeActionFromQueue } from './offlineQueue';
+
 // ---------------------------------------------------------------
 // Utilitário de requisição
 // ---------------------------------------------------------------
@@ -32,17 +34,48 @@ async function apiPost<T>(body: object): Promise<T> {
   if (!API_URL) throw new Error('VITE_SHEETS_API_URL não configurada');
   const t0 = performance.now();
   console.log(`[DIAG API] POST`, body);
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    body: JSON.stringify(body),
-    redirect: 'follow',
-  });
+  let res;
+  try {
+    res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(body),
+      redirect: 'follow',
+    });
+  } catch (err) {
+    console.warn('[DIAG API] POST Offline, salvando na fila:', err);
+    enqueueAction(body);
+    throw new Error('Offline');
+  }
+
   console.log(`[DIAG API] POST ← status=${res.status} (${(performance.now()-t0).toFixed(0)}ms)`);
   if (!res.ok) throw new Error(`Erro HTTP ${res.status}`);
   const json = await res.json();
   if (json.error) throw new Error(json.error);
   return json.data as T;
+}
+
+export async function processSyncQueue() {
+  const queue = getSyncQueue();
+  if (queue.length === 0) return;
+  console.log(`[DIAG API] Processando ${queue.length} ações offline pendentes...`);
+  for (const action of queue) {
+    try {
+      console.log(`[DIAG API] Processando fila ID ${action.id} (entidade: ${(action.body as any)?.entity})`);
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(action.body),
+        redirect: 'follow',
+      });
+      if (res.ok) {
+        removeActionFromQueue(action.id);
+      }
+    } catch (e) {
+      console.warn(`[DIAG API] Falha ao processar fila ID ${action.id}, continuará pendente.`);
+      break; // Interrompe a fila se não tiver internet
+    }
+  }
 }
 
 // ---------------------------------------------------------------

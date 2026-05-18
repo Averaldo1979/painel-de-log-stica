@@ -10,7 +10,8 @@ import { UsersScreen } from './components/UsersScreen';
 import { LoginScreen } from './components/LoginScreen';
 import { Team, Cargo, ViewMode, CargoStatus, Unit, User } from './types';
 import { Database, WifiOff, Wifi } from 'lucide-react';
-import { unitsApi, teamsApi, cargosApi, usersApi, pingApi } from './sheetsApi';
+import { unitsApi, teamsApi, cargosApi, usersApi, pingApi, processSyncQueue } from './sheetsApi';
+import { getSyncQueue } from './offlineQueue';
 import { useRealtimeSync } from './useRealtimeSync';
 
 // ── Diagnostic Logger ─────────────────────────────────────────
@@ -52,6 +53,7 @@ const App: React.FC = () => {
   const [view, setView] = useState<ViewMode>('DASHBOARD');
   const [editingCargo, setEditingCargo] = useState<Cargo | null>(null);
   const [syncError, setSyncError] = useState<string>('');
+  const [pendingSyncCount, setPendingSyncCount] = useState<number>(0);
 
   // ----------------------------------------------------------------
   // Carregamento inicial
@@ -60,6 +62,7 @@ const App: React.FC = () => {
     diagLog('LOAD_DATA — iniciando carregamento');
     setIsSyncing(true);
     setSyncError('');
+    setPendingSyncCount(getSyncQueue().length);
 
     try {
       diagLog('PING_API — verificando conectividade com a API');
@@ -68,6 +71,10 @@ const App: React.FC = () => {
       setIsOnline(apiAvailable);
 
       if (apiAvailable) {
+        // Tenta enviar alterações offline antes de buscar dados novos
+        await processSyncQueue();
+        setPendingSyncCount(getSyncQueue().length);
+
         const loadSafe = async <T,>(fn: () => Promise<T[]>, key: string): Promise<T[]> => {
           diagLog(`LOAD_ENTITY — buscando "${key}" da API`);
           try {
@@ -186,6 +193,15 @@ const App: React.FC = () => {
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  useEffect(() => {
+    const updateCount = () => {
+      setPendingSyncCount(getSyncQueue().length);
+    };
+    updateCount();
+    const interval = setInterval(updateCount, 3000);
+    return () => clearInterval(interval);
+  }, [isSyncing]);
 
   // ── Sincronização em tempo real (polling + Visibility API + BroadcastChannel) ──
   const syncState = useRealtimeSync({
@@ -485,6 +501,7 @@ const App: React.FC = () => {
       currentUser={currentUser}
       users={users}
       setCurrentUser={setCurrentUser}
+      pendingSyncCount={pendingSyncCount}
     >
       {/* Indicador de sync */}
       <div className={`fixed top-4 right-8 z-[60] flex items-center gap-2 px-3 py-1.5 rounded-full backdrop-blur-md transition-all duration-500 ${

@@ -15,7 +15,8 @@ import {
   Radio,
   UserCircle,
   Monitor,
-  ArrowLeft
+  ArrowLeft,
+  Cloud
 } from 'lucide-react';
 import { ViewMode, Unit, User } from '../types';
 
@@ -28,9 +29,10 @@ interface LayoutProps {
   currentUser?: User | null;
   users?: User[];
   setCurrentUser?: (u: User | null) => void;
+  pendingSyncCount?: number;
 }
 
-export const Layout: React.FC<LayoutProps> = ({ children, view, setView, onReset, units, currentUser, users, setCurrentUser }) => {
+export const Layout: React.FC<LayoutProps> = ({ children, view, setView, onReset, units, currentUser, users, setCurrentUser, pendingSyncCount }) => {
   const [time, setTime] = useState(new Date());
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -215,6 +217,13 @@ export const Layout: React.FC<LayoutProps> = ({ children, view, setView, onReset
           </div>
 
           <div className="flex items-center gap-2 md:gap-4">
+            {pendingSyncCount !== undefined && pendingSyncCount > 0 && (
+              <div className="flex items-center gap-1.5 px-3 py-2 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 rounded-xl animate-pulse cursor-help" title={`${pendingSyncCount} ações salvas offline aguardando sincronização`}>
+                <Cloud size={14} className="animate-bounce" />
+                <span className="text-[9px] font-black uppercase tracking-wider hidden sm:inline">Ações Pendentes ({pendingSyncCount})</span>
+                <span className="text-[9px] font-black uppercase tracking-wider sm:hidden">({pendingSyncCount})</span>
+              </div>
+            )}
             {currentUser && setCurrentUser && (
               <>
                 {/* Mobile: só ícone de logout */}
