@@ -369,8 +369,8 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
                         </div>
                       </div>
 
-                      <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between mt-5 pt-4 border-t border-slate-700/50 gap-4">
-                        <div className="flex items-center gap-3 sm:gap-6 flex-wrap">
+                      <div className="flex flex-row flex-wrap items-end justify-between mt-5 pt-4 border-t border-slate-700/50 gap-4">
+                        <div className="flex items-end gap-3 sm:gap-6 flex-wrap">
                           {/* Horário de início */}
                           <div className="flex flex-col">
                             <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Início Real</span>
@@ -403,19 +403,19 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
                         </div>
 
                         {!isTvMode && (
-                          <div className="flex flex-wrap justify-end gap-2 w-full xl:w-auto">
+                          <div className="flex flex-wrap items-center gap-2">
                             {cargo.status === CargoStatus.PROGRAMADO && (
-                              <button onClick={() => onStart(cargo.id)} className="px-3 py-1.5 bg-sky-500 text-slate-950 rounded-lg font-black text-[9px] uppercase hover:bg-white transition-all shadow-[0_0_10px_rgba(14,165,233,0.4)] hover:shadow-[0_0_15px_rgba(255,255,255,0.6)] z-20 relative">
+                              <button onClick={() => onStart(cargo.id)} className="px-3 py-1.5 h-[34px] sm:h-[38px] bg-sky-500 text-slate-950 rounded-lg font-black text-[9px] uppercase hover:bg-white transition-all shadow-[0_0_10px_rgba(14,165,233,0.4)] hover:shadow-[0_0_15px_rgba(255,255,255,0.6)] z-20 relative">
                                 Iniciar
                               </button>
                             )}
                             {cargo.status === CargoStatus.CARREGANDO && (
-                              <button onClick={() => onEnd(cargo.id)} className="px-3 py-1.5 bg-emerald-500 text-slate-950 rounded-lg font-black text-[9px] uppercase hover:bg-white transition-all shadow-[0_0_10px_rgba(16,185,129,0.4)] hover:shadow-[0_0_15px_rgba(255,255,255,0.6)] z-20 relative">
+                              <button onClick={() => onEnd(cargo.id)} className="px-3 py-1.5 h-[34px] sm:h-[38px] bg-emerald-500 text-slate-950 rounded-lg font-black text-[9px] uppercase hover:bg-white transition-all shadow-[0_0_10px_rgba(16,185,129,0.4)] hover:shadow-[0_0_15px_rgba(255,255,255,0.6)] z-20 relative">
                                 Finalizar
                               </button>
                             )}
-                            <button onClick={() => onEdit(cargo)} className="p-2 text-slate-400 bg-slate-800 hover:text-yellow-500 hover:bg-yellow-500/10 rounded-lg transition-all border border-slate-700 hover:border-yellow-500/30 z-20 relative" title="Editar"><Edit2 size={14} /></button>
-                            <button onClick={() => onDelete(cargo.id)} className="p-2 text-slate-400 bg-slate-800 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all border border-slate-700 hover:border-red-500/30 z-20 relative" title="Excluir"><Trash2 size={14} /></button>
+                            <button onClick={() => onEdit(cargo)} className="p-2 h-[34px] sm:h-[38px] w-[34px] sm:w-[38px] flex items-center justify-center text-slate-400 bg-slate-800 hover:text-yellow-500 hover:bg-yellow-500/10 rounded-lg transition-all border border-slate-700 hover:border-yellow-500/30 z-20 relative" title="Editar"><Edit2 size={16} /></button>
+                            <button onClick={() => onDelete(cargo.id)} className="p-2 h-[34px] sm:h-[38px] w-[34px] sm:w-[38px] flex items-center justify-center text-slate-400 bg-slate-800 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all border border-slate-700 hover:border-red-500/30 z-20 relative" title="Excluir"><Trash2 size={16} /></button>
                           </div>
                         )}
                       </div>
