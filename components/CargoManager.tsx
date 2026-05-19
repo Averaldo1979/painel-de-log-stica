@@ -88,6 +88,32 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
     return cargo.status;
   };
 
+  const getStatusStyle = (status: string) => {
+    const s = String(status).toUpperCase();
+    if (s.includes('ATRASADO')) {
+      return 'text-rose-400 bg-rose-500/10 border border-rose-500/30 shadow-[0_0_15px_rgba(244,63,94,0.2)] font-black animate-pulse';
+    }
+    if (s.includes('DESLOCAMENTO') || s.includes('TRÂNSITO') || s.includes('TRANSITO')) {
+      return 'text-indigo-400 bg-indigo-500/10 border border-indigo-500/30 shadow-[0_0_12px_rgba(99,102,241,0.15)] font-black animate-pulse';
+    }
+    if (s.includes('CARREGANDO')) {
+      return 'text-amber-400 bg-amber-500/10 border border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.2)] font-black';
+    }
+    if (s.includes('FINALIZADO') || s.includes('CONCLUÍDO') || s.includes('CONCLUIDO')) {
+      return 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 shadow-[0_0_12px_rgba(16,185,129,0.15)] font-bold';
+    }
+    return 'text-sky-400 bg-sky-500/10 border border-sky-500/30 shadow-[0_0_12px_rgba(14,165,233,0.15)]';
+  };
+
+  const getStatusLabel = (status: string) => {
+    const s = String(status).toUpperCase();
+    if (s.includes('ATRASADO')) return 'Atrasado';
+    if (s.includes('DESLOCAMENTO') || s.includes('TRÂNSITO') || s.includes('TRANSITO')) return 'Em deslocamento';
+    if (s.includes('CARREGANDO')) return 'Carregando';
+    if (s.includes('FINALIZADO')) return 'Finalizado';
+    return 'Programado';
+  };
+
   const formatStopwatch = (inicio?: string, fim?: string): string | null => {
     if (!inicio) return null;
     try {
@@ -477,13 +503,8 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
                           <div className="font-bold text-white text-sm uppercase tracking-tight">EQP {team?.number || '---'}</div>
                         </div>
                         <div className="text-right">
-                          <span className={`px-2 py-1 rounded border text-[9px] font-black uppercase text-white ${
-                            effectiveStatus === CargoStatus.ATRASADO ? 'bg-red-600 border-red-500 animate-pulse' :
-                            effectiveStatus === CargoStatus.CARREGANDO ? 'bg-yellow-500 border-yellow-500 text-slate-950 text-black' :
-                            effectiveStatus === CargoStatus.FINALIZADO ? 'bg-emerald-600 border-emerald-500' :
-                            'bg-slate-800 border-slate-700 text-slate-400'
-                          }`}>
-                            {effectiveStatus}
+                          <span className={`px-2 py-1 rounded border text-[9px] font-black uppercase tracking-widest ${getStatusStyle(effectiveStatus)}`}>
+                            {getStatusLabel(effectiveStatus)}
                           </span>
                         </div>
                       </div>

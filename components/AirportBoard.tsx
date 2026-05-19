@@ -122,14 +122,31 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
     }
   };
 
-  const getStatusStyle = (status: CargoStatus) => {
-    switch (status) {
-      case CargoStatus.PROGRAMADO: return 'text-sky-400 bg-sky-400/5 border-sky-400/30';
-      case CargoStatus.CARREGANDO: return 'text-slate-950 bg-yellow-500 border-yellow-500 font-black shadow-[0_0_15px_rgba(234,179,8,0.4)]';
-      case CargoStatus.FINALIZADO: return 'text-emerald-400 bg-emerald-400/5 border-emerald-400/30';
-      case CargoStatus.ATRASADO: return 'text-white bg-red-600 border-red-500 font-black animate-pulse';
-      default: return 'text-slate-400';
+  const getStatusStyle = (status: string) => {
+    const s = String(status).toUpperCase();
+    if (s.includes('ATRASADO')) {
+      return 'text-rose-400 bg-rose-500/10 border border-rose-500/30 shadow-[0_0_15px_rgba(244,63,94,0.2)] font-black animate-pulse';
     }
+    if (s.includes('DESLOCAMENTO') || s.includes('TRÂNSITO') || s.includes('TRANSITO')) {
+      return 'text-indigo-400 bg-indigo-500/10 border border-indigo-500/30 shadow-[0_0_12px_rgba(99,102,241,0.15)] font-black animate-pulse';
+    }
+    if (s.includes('CARREGANDO')) {
+      return 'text-amber-400 bg-amber-500/10 border border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.2)] font-black';
+    }
+    if (s.includes('FINALIZADO') || s.includes('CONCLUÍDO') || s.includes('CONCLUIDO')) {
+      return 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 shadow-[0_0_12px_rgba(16,185,129,0.15)] font-bold';
+    }
+    // Default to PROGRAMADO / other
+    return 'text-sky-400 bg-sky-500/10 border border-sky-500/30 shadow-[0_0_12px_rgba(14,165,233,0.15)]';
+  };
+
+  const getStatusLabel = (status: string) => {
+    const s = String(status).toUpperCase();
+    if (s.includes('ATRASADO')) return 'Atrasado';
+    if (s.includes('DESLOCAMENTO') || s.includes('TRÂNSITO') || s.includes('TRANSITO')) return 'Em deslocamento';
+    if (s.includes('CARREGANDO')) return 'Carregando';
+    if (s.includes('FINALIZADO')) return 'Finalizado';
+    return 'Programado';
   };
 
   // Lógica de Filtragem e Ordenação
@@ -291,7 +308,7 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-x-6 gap-y-12 pt-4 pb-8 px-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 min-[1900px]:grid-cols-6 gap-x-4 gap-y-10 pt-4 pb-8 px-1">
             {filteredAndSortedCargos.map((cargo) => {
               const pickup = formatDateTime(cargo.pickupTime);
               const slaughter = formatDateTime(cargo.slaughterTime);
@@ -301,98 +318,98 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
               
               return (
                 <div key={cargo.id} className="relative pb-6 pt-2 drop-shadow-2xl hover:scale-[1.02] transition-transform duration-300 group">
-                  <div className="flex items-end h-full">
+                  <div className="flex items-stretch h-full">
                     {/* Trailer */}
                     <div 
-                      className={`relative z-10 flex-1 w-full bg-gradient-to-br from-[#0f172a]/90 to-[#1e293b]/90 backdrop-blur-md border-y border-l border-white/5 rounded-l-3xl rounded-tr-md p-6 flex flex-col justify-between
+                      className={`relative z-10 flex-1 w-full bg-gradient-to-br from-[#0f172a]/95 to-[#1e293b]/90 backdrop-blur-md border-y border-l border-white/5 rounded-l-3xl rounded-tr-md p-4 sm:p-5 lg:p-4 xl:p-5 flex flex-col justify-between
                         ${isDelayed ? 'border-red-500 shadow-[0_0_30px_rgba(239,68,68,0.3)] row-atrasado-blink' : ''} 
                         ${isLoading ? 'border-yellow-500 shadow-[0_0_30px_rgba(234,179,8,0.3)] row-carregando-blink' : 'shadow-xl'}`}
                     >
                       {/* Top vents / details */}
-                      <div className="absolute top-0 left-0 w-full flex justify-around opacity-20 px-6 pt-1.5 pointer-events-none">
-                        {[...Array(6)].map((_, i) => <div key={i} className="w-10 h-1.5 bg-slate-400 rounded-full"></div>)}
+                      <div className="absolute top-0 left-0 w-full flex justify-center gap-1 opacity-20 px-4 pt-1 pointer-events-none">
+                        {[...Array(6)].map((_, i) => <div key={i} className="flex-1 max-w-[40px] h-1 bg-slate-400 rounded-full"></div>)}
                       </div>
                       
                       <div className="space-y-4 pt-2">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <div className="text-yellow-500 font-black text-xl airport-font drop-shadow-[0_0_8px_rgba(234,179,8,0.2)]">
+                        <div className="flex justify-between items-start gap-2">
+                          <div className="min-w-0">
+                            <div className="text-yellow-500 font-black text-base sm:text-xl airport-font drop-shadow-[0_0_8px_rgba(234,179,8,0.2)] truncate">
                               #{cargo.cargoNumber}
                             </div>
-                            <div className="font-bold text-white text-sm uppercase tracking-tight">
+                            <div className="font-bold text-white text-xs sm:text-sm uppercase tracking-tight truncate">
                               {getTeamLabel(cargo.teamId)}
                             </div>
                           </div>
-                          <div className="text-right">
-                            <span className={`px-2 py-1 rounded bg-slate-800 border text-[9px] font-black uppercase tracking-widest ${getStatusStyle(effectiveStatus)}`}>
-                              {effectiveStatus}
+                          <div className="text-right shrink-0">
+                            <span className={`px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-black uppercase tracking-wider block ${getStatusStyle(effectiveStatus)}`}>
+                              {getStatusLabel(effectiveStatus)}
                             </span>
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4 border-y border-slate-700/50 py-3">
-                          <div>
-                            <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-1">Integrado</p>
-                            <p className="text-slate-200 text-sm font-medium uppercase truncate" title={cargo.integrated}>{cargo.integrated}</p>
+                        <div className="grid grid-cols-2 gap-x-2 gap-y-3 sm:gap-x-4 sm:gap-y-4 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-1 2xl:grid-cols-2 border-y border-slate-700/50 py-3">
+                          <div className="min-w-0">
+                            <p className="text-[8px] sm:text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-0.5">Integrado</p>
+                            <p className="text-slate-200 text-xs sm:text-sm font-medium uppercase break-words whitespace-normal line-clamp-2" title={cargo.integrated}>{cargo.integrated}</p>
                           </div>
-                          <div>
-                            <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-1">Origem/Cidade</p>
-                            <p className="text-slate-400 text-sm font-medium uppercase truncate" title={cargo.city}>{cargo.city}</p>
+                          <div className="min-w-0">
+                            <p className="text-[8px] sm:text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-0.5">Origem/Cidade</p>
+                            <p className="text-slate-400 text-xs sm:text-sm font-medium uppercase break-words whitespace-normal line-clamp-2" title={cargo.city}>{cargo.city}</p>
                           </div>
-                          <div>
-                            <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-1">Unidade Raízes</p>
-                            <p className="text-slate-200 text-sm font-medium uppercase truncate">{cargo.unit}</p>
+                          <div className="min-w-0">
+                            <p className="text-[8px] sm:text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-0.5">Unidade Raízes</p>
+                            <p className="text-slate-200 text-xs sm:text-sm font-medium uppercase break-words whitespace-normal line-clamp-2">{cargo.unit}</p>
                           </div>
-                          <div>
-                            <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-1">Aves / Peso</p>
-                            <p className="text-slate-200 text-sm font-medium uppercase">
+                          <div className="min-w-0">
+                            <p className="text-[8px] sm:text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-0.5">Aves / Peso</p>
+                            <p className="text-slate-200 text-xs sm:text-sm font-medium uppercase">
                               <span className="text-white">{(Number(cargo.birdCount) || 0).toLocaleString()}</span> / <span className="text-yellow-500">{(Number(cargo.totalLoad) || 0).toLocaleString()} Kg</span>
                             </p>
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-x-2 gap-y-3 sm:gap-x-4 sm:gap-y-4 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-1 2xl:grid-cols-2">
                           <div>
-                            <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-1">Hora Apanha</p>
-                            <div className={`font-black text-lg ${isDelayed || isLoading ? 'text-white' : 'text-sky-400'} glow-text leading-none airport-font`}>
+                            <p className="text-[8px] sm:text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-0.5">Hora Apanha</p>
+                            <div className={`font-black text-sm sm:text-lg ${isDelayed || isLoading ? 'text-white' : 'text-sky-400'} glow-text leading-none airport-font`}>
                               {pickup.time}
                             </div>
-                            <div className="text-[9px] font-black uppercase text-slate-600 mt-1">{pickup.date}</div>
+                            <div className="text-[8px] sm:text-[9px] font-black uppercase text-slate-600 mt-0.5">{pickup.date}</div>
                           </div>
                           <div>
-                            <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-1">Previsão Abate</p>
-                            <div className="font-black text-lg text-yellow-500/80 leading-none airport-font">
+                            <p className="text-[8px] sm:text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-0.5">Previsão Abate</p>
+                            <div className="font-black text-sm sm:text-lg text-yellow-500/80 leading-none airport-font">
                               {slaughter.time}
                             </div>
-                            <div className="text-[9px] font-black uppercase text-slate-600 mt-1">{slaughter.date}</div>
+                            <div className="text-[8px] sm:text-[9px] font-black uppercase text-slate-600 mt-0.5">{slaughter.date}</div>
                           </div>
                         </div>
                       </div>
 
-                      <div className="flex flex-row flex-wrap items-end justify-between mt-5 pt-4 border-t border-slate-700/50 gap-4">
-                        <div className="flex items-end gap-3 sm:gap-6 flex-wrap">
+                      <div className="flex flex-col gap-4 mt-5 pt-4 border-t border-slate-700/50">
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                           {/* Horário de início */}
-                          <div className="flex flex-col">
+                          <div className="flex flex-col flex-1 min-w-[70px]">
                             <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Início Real</span>
-                            <span className={`text-sm sm:text-base font-black airport-font px-2 py-1 rounded-md border ${cargo.horario_inicio ? 'text-sky-400 bg-sky-400/10 border-sky-400/20' : 'text-slate-600 bg-slate-800/50 border-slate-700'}`}>
+                            <span className={`text-xs sm:text-sm font-black text-center airport-font px-1.5 py-1 rounded-md border ${cargo.horario_inicio ? 'text-sky-400 bg-sky-400/10 border-sky-400/20' : 'text-slate-600 bg-slate-800/50 border-slate-700'}`}>
                               {cargo.horario_inicio ? new Date(cargo.horario_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '--:--'}
                             </span>
                           </div>
                           
                           {/* Horário de fim */}
-                          <div className="flex flex-col">
+                          <div className="flex flex-col flex-1 min-w-[70px]">
                             <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Fim Real</span>
-                            <span className={`text-sm sm:text-base font-black airport-font px-2 py-1 rounded-md border ${cargo.horario_fim ? 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20' : 'text-slate-600 bg-slate-800/50 border-slate-700'}`}>
+                            <span className={`text-xs sm:text-sm font-black text-center airport-font px-1.5 py-1 rounded-md border ${cargo.horario_fim ? 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20' : 'text-slate-600 bg-slate-800/50 border-slate-700'}`}>
                               {cargo.horario_fim ? new Date(cargo.horario_fim).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '--:--'}
                             </span>
                           </div>
 
                           {/* Cronômetro */}
-                          <div className="flex flex-col">
+                          <div className="flex flex-col flex-1 min-w-[80px]">
                             <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Duração</span>
-                            <span className={`text-sm sm:text-base font-black airport-font px-2 py-1 rounded-md border tracking-wider ${
+                            <span className={`text-xs sm:text-sm font-black text-center airport-font px-1.5 py-1 rounded-md border tracking-wider ${
                               cargo.status === CargoStatus.CARREGANDO 
-                                ? 'text-yellow-400 bg-yellow-400/10 border-yellow-400/30 shadow-[0_0_10px_rgba(234,179,8,0.2)]' 
+                                ? 'text-yellow-400 bg-yellow-400/10 border-yellow-400/30 shadow-[0_0_10px_rgba(234,179,8,0.2)] animate-pulse' 
                                 : cargo.status === CargoStatus.FINALIZADO && cargo.horario_inicio
                                 ? 'text-slate-300 bg-slate-800 border-slate-700'
                                 : 'text-slate-600 bg-slate-800/50 border-slate-700'
@@ -403,34 +420,34 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
                         </div>
 
                         {!isTvMode && (
-                          <div className="flex flex-wrap items-center gap-2">
+                          <div className="flex flex-wrap items-center justify-end gap-1.5 pt-2 border-t border-slate-800/30">
                             {cargo.status === CargoStatus.PROGRAMADO && (
-                              <button onClick={() => onStart(cargo.id)} className="px-3 py-1.5 h-[34px] sm:h-[38px] bg-sky-500 text-slate-950 rounded-lg font-black text-[9px] uppercase hover:bg-white transition-all shadow-[0_0_10px_rgba(14,165,233,0.4)] hover:shadow-[0_0_15px_rgba(255,255,255,0.6)] z-20 relative">
+                              <button onClick={() => onStart(cargo.id)} className="flex-1 sm:flex-initial px-2.5 py-1.5 h-[32px] sm:h-[36px] bg-sky-500 text-slate-950 rounded-lg font-black text-[9px] uppercase hover:bg-white transition-all shadow-[0_0_10px_rgba(14,165,233,0.4)] hover:shadow-[0_0_15px_rgba(255,255,255,0.6)] z-20 relative">
                                 Iniciar
                               </button>
                             )}
                             {cargo.status === CargoStatus.CARREGANDO && (
-                              <button onClick={() => onEnd(cargo.id)} className="px-3 py-1.5 h-[34px] sm:h-[38px] bg-emerald-500 text-slate-950 rounded-lg font-black text-[9px] uppercase hover:bg-white transition-all shadow-[0_0_10px_rgba(16,185,129,0.4)] hover:shadow-[0_0_15px_rgba(255,255,255,0.6)] z-20 relative">
+                              <button onClick={() => onEnd(cargo.id)} className="flex-1 sm:flex-initial px-2.5 py-1.5 h-[32px] sm:h-[36px] bg-emerald-500 text-slate-950 rounded-lg font-black text-[9px] uppercase hover:bg-white transition-all shadow-[0_0_10px_rgba(16,185,129,0.4)] hover:shadow-[0_0_15px_rgba(255,255,255,0.6)] z-20 relative">
                                 Finalizar
                               </button>
                             )}
-                            <button onClick={() => onEdit(cargo)} className="p-2 h-[34px] sm:h-[38px] w-[34px] sm:w-[38px] flex items-center justify-center text-slate-400 bg-slate-800 hover:text-yellow-500 hover:bg-yellow-500/10 rounded-lg transition-all border border-slate-700 hover:border-yellow-500/30 z-20 relative" title="Editar"><Edit2 size={16} /></button>
-                            <button onClick={() => onDelete(cargo.id)} className="p-2 h-[34px] sm:h-[38px] w-[34px] sm:w-[38px] flex items-center justify-center text-slate-400 bg-slate-800 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all border border-slate-700 hover:border-red-500/30 z-20 relative" title="Excluir"><Trash2 size={16} /></button>
+                            <button onClick={() => onEdit(cargo)} className="p-2 h-[32px] sm:h-[36px] w-[32px] sm:w-[36px] flex items-center justify-center text-slate-400 bg-slate-800 hover:text-yellow-500 hover:bg-yellow-500/10 rounded-lg transition-all border border-slate-700 hover:border-yellow-500/30 z-20 relative" title="Editar"><Edit2 size={12} /></button>
+                            <button onClick={() => onDelete(cargo.id)} className="p-2 h-[32px] sm:h-[36px] w-[32px] sm:w-[36px] flex items-center justify-center text-slate-400 bg-slate-800 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all border border-slate-700 hover:border-red-500/30 z-20 relative" title="Excluir"><Trash2 size={12} /></button>
                           </div>
                         )}
                       </div>
                     </div>
 
                     {/* Cabin */}
-                    <div className={`w-14 sm:w-20 h-36 bg-gradient-to-b from-[#1e293b]/90 to-[#0f172a]/90 backdrop-blur-md border-y border-r border-white/5 rounded-r-[32px] relative z-0 flex flex-col justify-start pb-4 shrink-0 shadow-lg transition-all duration-300 ${isLoading ? 'border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.2)]' : isDelayed ? 'border-red-500/50' : 'group-hover:border-slate-500/50'}`}>
+                    <div className={`w-14 sm:w-20 lg:w-14 xl:w-16 2xl:w-14 self-stretch min-h-[140px] bg-gradient-to-b from-[#1e293b]/90 to-[#0f172a]/90 backdrop-blur-md border-y border-r border-white/5 rounded-r-[32px] relative z-0 flex flex-col justify-start pb-4 shrink-0 shadow-lg transition-all duration-300 ${isLoading ? 'border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.2)]' : isDelayed ? 'border-red-500/50' : 'group-hover:border-slate-500/50'}`}>
                        {/* Window */}
-                       <div className="mt-4 ml-1 mr-2 h-14 bg-gradient-to-br from-sky-400/40 to-sky-600/20 border border-sky-400/30 rounded-tr-2xl rounded-bl-md flex items-center justify-center relative overflow-hidden">
+                       <div className="mt-4 ml-1 mr-1.5 sm:mr-2 h-10 sm:h-14 lg:h-10 xl:h-12 bg-gradient-to-br from-sky-400/40 to-sky-600/20 border border-sky-400/30 rounded-tr-2xl rounded-bl-md flex items-center justify-center relative overflow-hidden shrink-0">
                           {/* Glare effect */}
                           <div className="absolute -top-4 -left-4 w-12 h-16 bg-white/20 rotate-45"></div>
                           {isLoading && <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-ping absolute bottom-2 right-2"></div>}
                        </div>
                        {/* Door handle */}
-                       <div className="w-4 h-1.5 bg-slate-600 rounded-full ml-3 mt-4"></div>
+                       <div className="w-4 h-1.5 bg-slate-600 rounded-full ml-3 mt-4 shrink-0"></div>
                        
                        {/* Exhaust/Pipe details */}
                        <div className="absolute bottom-12 -left-1.5 w-2 h-16 bg-gradient-to-b from-slate-400 to-slate-600 rounded-full border border-slate-800 hidden sm:block"></div>
@@ -438,23 +455,25 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
                        {/* Front Grill/Lights */}
                        <div className="absolute bottom-5 right-0 w-2.5 h-6 bg-yellow-500 rounded-l-full blur-[1px] shadow-[0_0_10px_rgba(234,179,8,0.8)] z-10"></div>
                        <div className="absolute bottom-5 right-0 w-1.5 h-6 bg-white rounded-l-full z-20"></div>
-                       
-                       {/* Front Wheel */}
-                       <div className="absolute -bottom-6 right-2 w-10 h-10 sm:w-12 sm:h-12 bg-[#0a0a0a] rounded-full border-[3.5px] border-slate-400 flex items-center justify-center shadow-[0_4px_10px_rgba(0,0,0,0.5)] z-30">
-                          <div className="w-4 h-4 sm:w-5 sm:h-5 bg-gradient-to-br from-slate-600 to-slate-800 rounded-full border border-slate-500"></div>
-                          {isLoading && <div className="absolute inset-0 rounded-full border-[2px] border-dashed border-yellow-500/50 animate-[spin_2s_linear_infinite]"></div>}
-                       </div>
                     </div>
                   </div>
                   
                   {/* Back Wheels */}
                   <div className="absolute -bottom-2 left-6 sm:left-10 flex gap-1 sm:gap-2 z-20">
-                     <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[#0a0a0a] rounded-full border-[3.5px] border-slate-400 flex items-center justify-center shadow-[0_4px_10px_rgba(0,0,0,0.5)]">
-                        <div className="w-4 h-4 sm:w-5 sm:h-5 bg-gradient-to-br from-slate-600 to-slate-800 rounded-full border border-slate-500"></div>
+                     <div className="w-11 h-11 sm:w-14 lg:w-11 xl:w-13 2xl:w-11 bg-[#0a0a0a] rounded-full border-[2.5px] sm:border-[3.5px] border-slate-400 flex items-center justify-center shadow-[0_4px_10px_rgba(0,0,0,0.5)]">
+                        <div className="w-3.5 h-3.5 sm:w-5 lg:w-3.5 xl:w-4.5 2xl:w-3.5 bg-gradient-to-br from-slate-600 to-slate-800 rounded-full border border-slate-500"></div>
                         {isLoading && <div className="absolute inset-0 rounded-full border-[2px] border-dashed border-yellow-500/50 animate-[spin_2s_linear_infinite]"></div>}
                      </div>
-                     <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[#0a0a0a] rounded-full border-[3.5px] border-slate-400 flex items-center justify-center shadow-[0_4px_10px_rgba(0,0,0,0.5)]">
-                        <div className="w-4 h-4 sm:w-5 sm:h-5 bg-gradient-to-br from-slate-600 to-slate-800 rounded-full border border-slate-500"></div>
+                     <div className="w-11 h-11 sm:w-14 lg:w-11 xl:w-13 2xl:w-11 bg-[#0a0a0a] rounded-full border-[2.5px] sm:border-[3.5px] border-slate-400 flex items-center justify-center shadow-[0_4px_10px_rgba(0,0,0,0.5)]">
+                        <div className="w-3.5 h-3.5 sm:w-5 lg:w-3.5 xl:w-4.5 2xl:w-3.5 bg-gradient-to-br from-slate-600 to-slate-800 rounded-full border border-slate-500"></div>
+                        {isLoading && <div className="absolute inset-0 rounded-full border-[2px] border-dashed border-yellow-500/50 animate-[spin_2s_linear_infinite]"></div>}
+                     </div>
+                  </div>
+
+                  {/* Front Wheel */}
+                  <div className="absolute -bottom-2 right-2 xs:right-3 sm:right-5 lg:right-3 xl:right-4 z-20">
+                     <div className="w-11 h-11 sm:w-14 lg:w-11 xl:w-13 2xl:w-11 bg-[#0a0a0a] rounded-full border-[2.5px] sm:border-[3.5px] border-slate-400 flex items-center justify-center shadow-[0_4px_10px_rgba(0,0,0,0.5)]">
+                        <div className="w-3.5 h-3.5 sm:w-5 lg:w-3.5 xl:w-4.5 2xl:w-3.5 bg-gradient-to-br from-slate-600 to-slate-800 rounded-full border border-slate-500"></div>
                         {isLoading && <div className="absolute inset-0 rounded-full border-[2px] border-dashed border-yellow-500/50 animate-[spin_2s_linear_infinite]"></div>}
                      </div>
                   </div>
