@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Play, 
   CheckCircle, 
+  Check,
   Trash2, 
   Edit2, 
   AlertCircle, 
@@ -321,22 +322,22 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
                   <div className="flex items-stretch h-full">
                     {/* Trailer */}
                     <div 
-                      className={`relative z-10 flex-1 w-full bg-gradient-to-br from-[#0f172a]/95 to-[#1e293b]/90 backdrop-blur-md border-y border-l border-white/5 rounded-l-3xl rounded-tr-md p-4 sm:p-5 lg:p-4 xl:p-5 flex flex-col justify-between
+                      className={`relative z-10 flex-1 w-full bg-gradient-to-br from-[#0f172a]/95 to-[#1e293b]/90 backdrop-blur-md border-y border-l border-white/5 rounded-l-3xl rounded-tr-md p-3.5 sm:p-4 lg:p-3.5 xl:p-4 flex flex-col justify-between
                         ${isDelayed ? 'border-red-500 shadow-[0_0_30px_rgba(239,68,68,0.3)] row-atrasado-blink' : ''} 
                         ${isLoading ? 'border-yellow-500 shadow-[0_0_30px_rgba(234,179,8,0.3)] row-carregando-blink' : 'shadow-xl'}`}
                     >
                       {/* Top vents / details */}
                       <div className="absolute top-0 left-0 w-full flex justify-center gap-1 opacity-20 px-4 pt-1 pointer-events-none">
-                        {[...Array(6)].map((_, i) => <div key={i} className="flex-1 max-w-[40px] h-1 bg-slate-400 rounded-full"></div>)}
+                        {[...Array(6)].map((_, i) => <div key={i} className="flex-1 max-w-[36px] h-1 bg-slate-400 rounded-full"></div>)}
                       </div>
                       
-                      <div className="space-y-4 pt-2">
+                      <div className="space-y-3 pt-1">
                         <div className="flex justify-between items-start gap-2">
                           <div className="min-w-0">
-                            <div className="text-yellow-500 font-black text-base sm:text-xl airport-font drop-shadow-[0_0_8px_rgba(234,179,8,0.2)] truncate">
+                            <div className="text-yellow-500 font-black text-base sm:text-lg airport-font drop-shadow-[0_0_8px_rgba(234,179,8,0.2)] truncate leading-none mb-1">
                               #{cargo.cargoNumber}
                             </div>
-                            <div className="font-bold text-white text-xs sm:text-sm uppercase tracking-tight truncate">
+                            <div className="font-bold text-white text-xs sm:text-xs uppercase tracking-tight truncate leading-none">
                               {getTeamLabel(cargo.teamId)}
                             </div>
                           </div>
@@ -347,72 +348,72 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-x-2 gap-y-3 sm:gap-x-4 sm:gap-y-4 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-1 2xl:grid-cols-2 border-y border-slate-700/50 py-3">
+                        <div className="grid grid-cols-2 gap-x-2 gap-y-2 border-y border-slate-700/50 py-2">
                           <div className="min-w-0">
-                            <p className="text-[8px] sm:text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-0.5">Integrado</p>
-                            <p className="text-slate-200 text-xs sm:text-sm font-medium uppercase break-words whitespace-normal line-clamp-2" title={cargo.integrated}>{cargo.integrated}</p>
+                            <p className="text-[8px] text-slate-500 uppercase font-bold tracking-widest leading-none mb-0.5">Integrado</p>
+                            <p className="text-slate-200 text-xs font-semibold uppercase break-words whitespace-normal line-clamp-2 leading-tight" title={cargo.integrated}>{cargo.integrated}</p>
                           </div>
                           <div className="min-w-0">
-                            <p className="text-[8px] sm:text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-0.5">Origem/Cidade</p>
-                            <p className="text-slate-400 text-xs sm:text-sm font-medium uppercase break-words whitespace-normal line-clamp-2" title={cargo.city}>{cargo.city}</p>
+                            <p className="text-[8px] text-slate-500 uppercase font-bold tracking-widest leading-none mb-0.5">Origem/Cidade</p>
+                            <p className="text-slate-400 text-xs font-semibold uppercase break-words whitespace-normal line-clamp-2 leading-tight" title={cargo.city}>{cargo.city}</p>
                           </div>
                           <div className="min-w-0">
-                            <p className="text-[8px] sm:text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-0.5">Unidade Raízes</p>
-                            <p className="text-slate-200 text-xs sm:text-sm font-medium uppercase break-words whitespace-normal line-clamp-2">{cargo.unit}</p>
+                            <p className="text-[8px] text-slate-500 uppercase font-bold tracking-widest leading-none mb-0.5">Unidade Raízes</p>
+                            <p className="text-slate-200 text-xs font-semibold uppercase break-words whitespace-normal line-clamp-2 leading-tight">{cargo.unit}</p>
                           </div>
                           <div className="min-w-0">
-                            <p className="text-[8px] sm:text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-0.5">Aves / Peso</p>
-                            <p className="text-slate-200 text-xs sm:text-sm font-medium uppercase">
-                              <span className="text-white">{(Number(cargo.birdCount) || 0).toLocaleString()}</span> / <span className="text-yellow-500">{(Number(cargo.totalLoad) || 0).toLocaleString()} Kg</span>
+                            <p className="text-[8px] text-slate-500 uppercase font-bold tracking-widest leading-none mb-0.5">Aves / Peso</p>
+                            <p className="text-slate-200 text-xs font-semibold uppercase leading-tight">
+                              <span className="text-white">{(Number(cargo.birdCount) || 0).toLocaleString()}</span> / <span className="text-yellow-500">{(Number(cargo.totalLoad) || 0).toLocaleString()} K</span>
                             </p>
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-x-2 gap-y-3 sm:gap-x-4 sm:gap-y-4 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-1 2xl:grid-cols-2">
+                        <div className="grid grid-cols-2 gap-x-2">
                           <div>
-                            <p className="text-[8px] sm:text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-0.5">Hora Apanha</p>
-                            <div className={`font-black text-sm sm:text-lg ${isDelayed || isLoading ? 'text-white' : 'text-sky-400'} glow-text leading-none airport-font`}>
+                            <p className="text-[8px] text-slate-500 uppercase font-bold tracking-widest leading-none mb-0.5">Hora Apanha</p>
+                            <div className={`font-black text-sm sm:text-base ${isDelayed || isLoading ? 'text-white' : 'text-sky-400'} glow-text leading-none airport-font`}>
                               {pickup.time}
                             </div>
-                            <div className="text-[8px] sm:text-[9px] font-black uppercase text-slate-600 mt-0.5">{pickup.date}</div>
+                            <div className="text-[8px] font-bold uppercase text-slate-600 mt-0.5">{pickup.date}</div>
                           </div>
                           <div>
-                            <p className="text-[8px] sm:text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-0.5">Previsão Abate</p>
-                            <div className="font-black text-sm sm:text-lg text-yellow-500/80 leading-none airport-font">
+                            <p className="text-[8px] text-slate-500 uppercase font-bold tracking-widest leading-none mb-0.5">Previsão Abate</p>
+                            <div className="font-black text-sm sm:text-base text-yellow-500/80 leading-none airport-font">
                               {slaughter.time}
                             </div>
-                            <div className="text-[8px] sm:text-[9px] font-black uppercase text-slate-600 mt-0.5">{slaughter.date}</div>
+                            <div className="text-[8px] font-bold uppercase text-slate-600 mt-0.5">{slaughter.date}</div>
                           </div>
                         </div>
                       </div>
 
-                      <div className="flex flex-col gap-4 mt-5 pt-4 border-t border-slate-700/50">
-                        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                      <div className="flex flex-col gap-3 mt-3 pt-2.5 border-t border-slate-700/50">
+                        <div className="flex items-center gap-1.5 sm:gap-2">
                           {/* Horário de início */}
-                          <div className="flex flex-col flex-1 min-w-[70px]">
-                            <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Início Real</span>
-                            <span className={`text-xs sm:text-sm font-black text-center airport-font px-1.5 py-1 rounded-md border ${cargo.horario_inicio ? 'text-sky-400 bg-sky-400/10 border-sky-400/20' : 'text-slate-600 bg-slate-800/50 border-slate-700'}`}>
+                          <div className="flex flex-col flex-1 min-w-[55px]">
+                            <span className="text-[7.5px] font-bold text-slate-500 uppercase tracking-widest mb-0.5">Início</span>
+                            <span className={`text-xs font-bold text-center airport-font py-0.5 rounded border ${cargo.horario_inicio ? 'text-sky-400 bg-sky-400/5 border-sky-400/20' : 'text-slate-600 bg-slate-800/20 border-slate-800'}`}>
                               {cargo.horario_inicio ? new Date(cargo.horario_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '--:--'}
                             </span>
                           </div>
                           
                           {/* Horário de fim */}
-                          <div className="flex flex-col flex-1 min-w-[70px]">
-                            <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Fim Real</span>
-                            <span className={`text-xs sm:text-sm font-black text-center airport-font px-1.5 py-1 rounded-md border ${cargo.horario_fim ? 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20' : 'text-slate-600 bg-slate-800/50 border-slate-700'}`}>
+                          <div className="flex flex-col flex-1 min-w-[55px]">
+                            <span className="text-[7.5px] font-bold text-slate-500 uppercase tracking-widest mb-0.5">Fim</span>
+                            <span className={`text-xs font-bold text-center airport-font py-0.5 rounded border ${cargo.horario_fim ? 'text-emerald-400 bg-emerald-400/5 border-emerald-400/20' : 'text-slate-600 bg-slate-800/20 border-slate-800'}`}>
                               {cargo.horario_fim ? new Date(cargo.horario_fim).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '--:--'}
                             </span>
                           </div>
 
                           {/* Cronômetro */}
-                          <div className="flex flex-col flex-1 min-w-[80px]">
-                            <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Duração</span>
-                            <span className={`text-xs sm:text-sm font-black text-center airport-font px-1.5 py-1 rounded-md border tracking-wider ${
+                          <div className="flex flex-col flex-1 min-w-[65px]">
+                            <span className="text-[7.5px] font-bold text-slate-500 uppercase tracking-widest mb-0.5">Duração</span>
+                            <span className={`text-xs font-bold text-center airport-font py-0.5 rounded border tracking-wider ${
                               cargo.status === CargoStatus.CARREGANDO 
-                                ? 'text-yellow-400 bg-yellow-400/10 border-yellow-400/30 shadow-[0_0_10px_rgba(234,179,8,0.2)] animate-pulse' 
+                                ? 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20 animate-pulse' 
                                 : cargo.status === CargoStatus.FINALIZADO && cargo.horario_inicio
-                                ? 'text-slate-300 bg-slate-800 border-slate-700'
-                                : 'text-slate-600 bg-slate-800/50 border-slate-700'
+                                ? 'text-slate-300 bg-slate-800/80 border-slate-700'
+                                : 'text-slate-600 bg-slate-800/20 border-slate-800'
                             }`}>
                               {formatStopwatch(cargo.horario_inicio, cargo.horario_fim) ?? '--:--:--'}
                             </span>
@@ -420,61 +421,76 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
                         </div>
 
                         {!isTvMode && (
-                          <div className="flex flex-wrap items-center justify-end gap-1.5 pt-2 border-t border-slate-800/30">
+                          <div className="flex flex-col gap-2 pt-2 border-t border-slate-800/30">
                             {cargo.status === CargoStatus.PROGRAMADO && (
-                              <button onClick={() => onStart(cargo.id)} className="flex-1 sm:flex-initial px-2.5 py-1.5 h-[32px] sm:h-[36px] bg-sky-500 text-slate-950 rounded-lg font-black text-[9px] uppercase hover:bg-white transition-all shadow-[0_0_10px_rgba(14,165,233,0.4)] hover:shadow-[0_0_15px_rgba(255,255,255,0.6)] z-20 relative">
-                                Iniciar
+                              <button 
+                                onClick={() => onStart(cargo.id)} 
+                                className="w-full py-2 bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-400 hover:to-sky-500 text-slate-950 rounded-xl font-extrabold text-xs uppercase tracking-wider transition-all duration-200 shadow-[0_0_15px_rgba(14,165,233,0.35)] hover:shadow-[0_0_20px_rgba(14,165,233,0.6)] active:scale-[0.98] z-20 relative flex items-center justify-center gap-1.5 cursor-pointer"
+                              >
+                                <Play size={12} className="fill-current" />
+                                Iniciar Transporte
                               </button>
                             )}
                             {cargo.status === CargoStatus.CARREGANDO && (
-                              <button onClick={() => onEnd(cargo.id)} className="flex-1 sm:flex-initial px-2.5 py-1.5 h-[32px] sm:h-[36px] bg-emerald-500 text-slate-950 rounded-lg font-black text-[9px] uppercase hover:bg-white transition-all shadow-[0_0_10px_rgba(16,185,129,0.4)] hover:shadow-[0_0_15px_rgba(255,255,255,0.6)] z-20 relative">
-                                Finalizar
+                              <button 
+                                onClick={() => onEnd(cargo.id)} 
+                                className="w-full py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 rounded-xl font-extrabold text-xs uppercase tracking-wider transition-all duration-200 shadow-[0_0_15px_rgba(16,185,129,0.35)] hover:shadow-[0_0_20px_rgba(16,185,129,0.6)] active:scale-[0.98] z-20 relative flex items-center justify-center gap-1.5 cursor-pointer"
+                              >
+                                <Check size={12} strokeWidth={3} />
+                                Finalizar Transporte
                               </button>
                             )}
-                            <button onClick={() => onEdit(cargo)} className="p-2 h-[32px] sm:h-[36px] w-[32px] sm:w-[36px] flex items-center justify-center text-slate-400 bg-slate-800 hover:text-yellow-500 hover:bg-yellow-500/10 rounded-lg transition-all border border-slate-700 hover:border-yellow-500/30 z-20 relative" title="Editar"><Edit2 size={12} /></button>
-                            <button onClick={() => onDelete(cargo.id)} className="p-2 h-[32px] sm:h-[36px] w-[32px] sm:w-[36px] flex items-center justify-center text-slate-400 bg-slate-800 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all border border-slate-700 hover:border-red-500/30 z-20 relative" title="Excluir"><Trash2 size={12} /></button>
+                            
+                            <div className="flex items-center gap-1.5 justify-end">
+                              <button onClick={() => onEdit(cargo)} className="flex-1 py-1.5 flex items-center justify-center gap-1 text-slate-400 bg-slate-800/40 hover:text-yellow-500 hover:bg-yellow-500/10 rounded-lg transition-all border border-slate-700 hover:border-yellow-500/30 z-20 relative cursor-pointer" title="Editar">
+                                <Edit2 size={11} /> <span className="text-[10px] font-bold uppercase tracking-wider">Editar</span>
+                              </button>
+                              <button onClick={() => onDelete(cargo.id)} className="flex-1 py-1.5 flex items-center justify-center gap-1 text-slate-400 bg-slate-800/40 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all border border-slate-700 hover:border-red-500/30 z-20 relative cursor-pointer" title="Excluir">
+                                <Trash2 size={11} /> <span className="text-[10px] font-bold uppercase tracking-wider">Excluir</span>
+                              </button>
+                            </div>
                           </div>
                         )}
                       </div>
                     </div>
 
                     {/* Cabin */}
-                    <div className={`w-14 sm:w-20 lg:w-14 xl:w-16 2xl:w-14 self-stretch min-h-[140px] bg-gradient-to-b from-[#1e293b]/90 to-[#0f172a]/90 backdrop-blur-md border-y border-r border-white/5 rounded-r-[32px] relative z-0 flex flex-col justify-start pb-4 shrink-0 shadow-lg transition-all duration-300 ${isLoading ? 'border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.2)]' : isDelayed ? 'border-red-500/50' : 'group-hover:border-slate-500/50'}`}>
+                    <div className={`w-12 sm:w-16 lg:w-12 xl:w-14 2xl:w-12 self-stretch min-h-[110px] bg-gradient-to-b from-[#1e293b]/90 to-[#0f172a]/90 backdrop-blur-md border-y border-r border-white/5 rounded-r-[24px] relative z-0 flex flex-col justify-start pb-4 shrink-0 shadow-lg transition-all duration-300 ${isLoading ? 'border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.2)]' : isDelayed ? 'border-red-500/50' : 'group-hover:border-slate-500/50'}`}>
                        {/* Window */}
-                       <div className="mt-4 ml-1 mr-1.5 sm:mr-2 h-10 sm:h-14 lg:h-10 xl:h-12 bg-gradient-to-br from-sky-400/40 to-sky-600/20 border border-sky-400/30 rounded-tr-2xl rounded-bl-md flex items-center justify-center relative overflow-hidden shrink-0">
+                       <div className="mt-3.5 ml-1 mr-1.5 h-8 sm:h-11 lg:h-8 xl:h-10 bg-gradient-to-br from-sky-400/40 to-sky-600/20 border border-sky-400/30 rounded-tr-xl rounded-bl-md flex items-center justify-center relative overflow-hidden shrink-0">
                           {/* Glare effect */}
                           <div className="absolute -top-4 -left-4 w-12 h-16 bg-white/20 rotate-45"></div>
-                          {isLoading && <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-ping absolute bottom-2 right-2"></div>}
+                          {isLoading && <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-ping absolute bottom-1 right-1"></div>}
                        </div>
                        {/* Door handle */}
-                       <div className="w-4 h-1.5 bg-slate-600 rounded-full ml-3 mt-4 shrink-0"></div>
+                       <div className="w-3.5 h-1 bg-slate-600 rounded-full ml-2 mt-3 shrink-0"></div>
                        
                        {/* Exhaust/Pipe details */}
-                       <div className="absolute bottom-12 -left-1.5 w-2 h-16 bg-gradient-to-b from-slate-400 to-slate-600 rounded-full border border-slate-800 hidden sm:block"></div>
+                       <div className="absolute bottom-10 -left-1 w-1.5 h-10 bg-gradient-to-b from-slate-400 to-slate-600 rounded-full border border-slate-800 hidden sm:block"></div>
 
                        {/* Front Grill/Lights */}
-                       <div className="absolute bottom-5 right-0 w-2.5 h-6 bg-yellow-500 rounded-l-full blur-[1px] shadow-[0_0_10px_rgba(234,179,8,0.8)] z-10"></div>
-                       <div className="absolute bottom-5 right-0 w-1.5 h-6 bg-white rounded-l-full z-20"></div>
+                       <div className="absolute bottom-3 right-0 w-2.5 h-5 bg-yellow-500 rounded-l-full blur-[1px] shadow-[0_0_10px_rgba(234,179,8,0.8)] z-10"></div>
+                       <div className="absolute bottom-3 right-0 w-1.5 h-5 bg-white rounded-l-full z-20"></div>
                     </div>
                   </div>
                   
                   {/* Back Wheels */}
-                  <div className="absolute -bottom-2 left-6 sm:left-10 flex gap-1 sm:gap-2 z-20">
-                     <div className="w-11 h-11 sm:w-14 lg:w-11 xl:w-13 2xl:w-11 bg-[#0a0a0a] rounded-full border-[2.5px] sm:border-[3.5px] border-slate-400 flex items-center justify-center shadow-[0_4px_10px_rgba(0,0,0,0.5)]">
-                        <div className="w-3.5 h-3.5 sm:w-5 lg:w-3.5 xl:w-4.5 2xl:w-3.5 bg-gradient-to-br from-slate-600 to-slate-800 rounded-full border border-slate-500"></div>
-                        {isLoading && <div className="absolute inset-0 rounded-full border-[2px] border-dashed border-yellow-500/50 animate-[spin_2s_linear_infinite]"></div>}
+                  <div className="absolute -bottom-2.5 left-5 sm:left-8 flex gap-1 z-20">
+                     <div className="w-9 h-9 sm:w-11 lg:w-9 xl:w-10 2xl:w-9 bg-[#0a0a0a] rounded-full border-[2px] sm:border-[2.5px] border-slate-400 flex items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
+                        <div className="w-3 h-3 sm:w-4 lg:w-3 xl:w-3.5 2xl:w-3 bg-gradient-to-br from-slate-600 to-slate-800 rounded-full border border-slate-500"></div>
+                        {isLoading && <div className="absolute inset-0 rounded-full border-[1.5px] border-dashed border-yellow-500/50 animate-[spin_2s_linear_infinite]"></div>}
                      </div>
-                     <div className="w-11 h-11 sm:w-14 lg:w-11 xl:w-13 2xl:w-11 bg-[#0a0a0a] rounded-full border-[2.5px] sm:border-[3.5px] border-slate-400 flex items-center justify-center shadow-[0_4px_10px_rgba(0,0,0,0.5)]">
-                        <div className="w-3.5 h-3.5 sm:w-5 lg:w-3.5 xl:w-4.5 2xl:w-3.5 bg-gradient-to-br from-slate-600 to-slate-800 rounded-full border border-slate-500"></div>
-                        {isLoading && <div className="absolute inset-0 rounded-full border-[2px] border-dashed border-yellow-500/50 animate-[spin_2s_linear_infinite]"></div>}
+                     <div className="w-9 h-9 sm:w-11 lg:w-9 xl:w-10 2xl:w-9 bg-[#0a0a0a] rounded-full border-[2px] sm:border-[2.5px] border-slate-400 flex items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
+                        <div className="w-3 h-3 sm:w-4 lg:w-3 xl:w-3.5 2xl:w-3 bg-gradient-to-br from-slate-600 to-slate-800 rounded-full border border-slate-500"></div>
+                        {isLoading && <div className="absolute inset-0 rounded-full border-[1.5px] border-dashed border-yellow-500/50 animate-[spin_2s_linear_infinite]"></div>}
                      </div>
                   </div>
 
                   {/* Front Wheel */}
-                  <div className="absolute -bottom-2 right-2 xs:right-3 sm:right-5 lg:right-3 xl:right-4 z-20">
-                     <div className="w-11 h-11 sm:w-14 lg:w-11 xl:w-13 2xl:w-11 bg-[#0a0a0a] rounded-full border-[2.5px] sm:border-[3.5px] border-slate-400 flex items-center justify-center shadow-[0_4px_10px_rgba(0,0,0,0.5)]">
-                        <div className="w-3.5 h-3.5 sm:w-5 lg:w-3.5 xl:w-4.5 2xl:w-3.5 bg-gradient-to-br from-slate-600 to-slate-800 rounded-full border border-slate-500"></div>
-                        {isLoading && <div className="absolute inset-0 rounded-full border-[2px] border-dashed border-yellow-500/50 animate-[spin_2s_linear_infinite]"></div>}
+                  <div className="absolute -bottom-2.5 right-2 xs:right-3 sm:right-4 lg:right-3 xl:right-3.5 z-20">
+                     <div className="w-9 h-9 sm:w-11 lg:w-9 xl:w-10 2xl:w-9 bg-[#0a0a0a] rounded-full border-[2px] sm:border-[2.5px] border-slate-400 flex items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
+                        <div className="w-3 h-3 sm:w-4 lg:w-3 xl:w-3.5 2xl:w-3 bg-gradient-to-br from-slate-600 to-slate-800 rounded-full border border-slate-500"></div>
+                        {isLoading && <div className="absolute inset-0 rounded-full border-[1.5px] border-dashed border-yellow-500/50 animate-[spin_2s_linear_infinite]"></div>}
                      </div>
                   </div>
                 </div>
