@@ -238,7 +238,7 @@ const App: React.FC = () => {
     setIsSyncing(true);
     const newUnit: Unit = { ...unitData, id: generateId() };
     try {
-      if (isOnline) await unitsApi.create(newUnit);
+      await unitsApi.create(newUnit);
     } catch (e) { /* offline */ }
     setUnits(prev => {
       const next = [...prev, newUnit];
@@ -252,7 +252,7 @@ const App: React.FC = () => {
     setIsSyncing(true);
     const full: Unit = { ...updated, id };
     try {
-      if (isOnline) await unitsApi.update(id, full);
+      await unitsApi.update(id, full);
     } catch (e) { /* offline */ }
     setUnits(prev => {
       const next = prev.map(u => u.id === id ? full : u);
@@ -268,7 +268,7 @@ const App: React.FC = () => {
     if (!window.confirm('Excluir esta unidade?')) return;
     setIsSyncing(true);
     try {
-      if (isOnline) await unitsApi.delete(id);
+      await unitsApi.delete(id);
     } catch (e) { /* offline */ }
     setUnits(prev => {
       const next = prev.filter(u => u.id !== id);
@@ -288,7 +288,7 @@ const App: React.FC = () => {
     const unit = units.find(u => u.id === teamData.unitId);
     const newTeam: Team = { ...teamData, unit: unit?.name || 'N/A', id: generateId() };
     try {
-      if (isOnline) await teamsApi.create(newTeam);
+      await teamsApi.create(newTeam);
     } catch (e) { /* offline */ }
     setTeams(prev => {
       const next = [...prev, newTeam];
@@ -303,7 +303,7 @@ const App: React.FC = () => {
     const unit = units.find(u => u.id === updated.unitId);
     const full: Team = { ...updated, unit: unit?.name || 'N/A', id };
     try {
-      if (isOnline) await teamsApi.update(id, full);
+      await teamsApi.update(id, full);
     } catch (e) { /* offline */ }
     setTeams(prev => {
       const next = prev.map(t => t.id === id ? full : t);
@@ -317,7 +317,7 @@ const App: React.FC = () => {
     if (!window.confirm('Excluir esta equipe?')) return;
     setIsSyncing(true);
     try {
-      if (isOnline) await teamsApi.delete(id);
+      await teamsApi.delete(id);
     } catch (e) { /* offline */ }
     setTeams(prev => {
       const next = prev.filter(t => t.id !== id);
@@ -341,7 +341,7 @@ const App: React.FC = () => {
       status: CargoStatus.PROGRAMADO
     };
     try {
-      if (isOnline) await cargosApi.create(newCargo);
+      await cargosApi.create(newCargo);
     } catch (e) { /* offline */ }
     setCargos(prev => {
       const next = [...prev, newCargo];
@@ -363,7 +363,7 @@ const App: React.FC = () => {
       unit: unit ? unit.name : (updated.unit || cargoToUpdate.unit)
     };
     try {
-      if (isOnline) await cargosApi.update(id, merged);
+      await cargosApi.update(id, merged);
     } catch (e) { /* offline */ }
     setCargos(prev => {
       const next = prev.map(c => c.id === id ? merged : c);
@@ -379,7 +379,7 @@ const App: React.FC = () => {
     if (!window.confirm('Deseja realmente excluir esta carga?')) return;
     setIsSyncing(true);
     try {
-      if (isOnline) await cargosApi.delete(id);
+      await cargosApi.delete(id);
     } catch (e) { /* offline */ }
     setCargos(prev => {
       const next = prev.filter(c => c.id !== id);
@@ -394,7 +394,7 @@ const App: React.FC = () => {
     if (!window.confirm('Limpar TODAS as cargas? Isso não pode ser desfeito.')) return;
     setIsSyncing(true);
     try {
-      if (isOnline) await cargosApi.deleteAll();
+      await cargosApi.deleteAll();
     } catch (e) { /* offline */ }
     setCargos([]);
     localStorage.setItem('cargos_v2', JSON.stringify([]));
@@ -428,7 +428,7 @@ const App: React.FC = () => {
     setIsSyncing(true);
     const newUser: User = { ...userData, id: generateId() };
     try {
-      if (isOnline) await usersApi.create(newUser);
+      await usersApi.create(newUser);
     } catch (e) { /* offline */ }
     setUsers(prev => {
       const next = [...prev, newUser];
@@ -445,7 +445,7 @@ const App: React.FC = () => {
     if (!userToUpdate) { setIsSyncing(false); return; }
     const merged: User = { ...userToUpdate, ...updated };
     try {
-      if (isOnline) await usersApi.update(id, merged);
+      await usersApi.update(id, merged);
     } catch (e) { /* offline */ }
     setUsers(prev => {
       const next = prev.map(u => u.id === id ? merged : u);
@@ -460,7 +460,7 @@ const App: React.FC = () => {
     if (!window.confirm('Excluir este usuário?')) return;
     setIsSyncing(true);
     try {
-      if (isOnline) await usersApi.delete(id);
+      await usersApi.delete(id);
     } catch (e) { /* offline */ }
     setUsers(prev => {
       const next = prev.filter(u => u.id !== id);
@@ -503,24 +503,29 @@ const App: React.FC = () => {
       setCurrentUser={setCurrentUser}
       pendingSyncCount={pendingSyncCount}
     >
-      {/* Indicador de sync */}
-      <div className={`fixed top-4 right-8 z-[60] flex items-center gap-2 px-3 py-1.5 rounded-full backdrop-blur-md transition-all duration-500 ${
-        isSyncing
-          ? 'opacity-100 translate-y-0 bg-slate-900/80 border border-slate-800'
-          : 'opacity-0 -translate-y-4 pointer-events-none bg-transparent'
-      }`}>
-        <Database size={12} className="text-yellow-500 animate-bounce" />
-        <span className="text-[9px] font-black text-white uppercase tracking-widest">Sincronizando...</span>
-      </div>
-
-      {/* Badge de status da conexão */}
-      <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2 px-3 py-1.5 rounded-full backdrop-blur-md border transition-all duration-700 ${
-        syncError
-          ? 'opacity-100 bg-red-900/80 border-red-700'
-          : 'opacity-0 pointer-events-none bg-transparent border-transparent'
-      }`}>
-        <WifiOff size={12} className="text-red-400" />
-        <span className="text-[9px] font-black text-red-200 uppercase tracking-widest max-w-xs truncate">{syncError}</span>
+      {/* Status da Conexão / Sincronização */}
+      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2 px-3 py-1.5 rounded-full backdrop-blur-md border transition-all duration-300 bg-slate-900/80 border-slate-800 shadow-xl">
+        {isSyncing ? (
+          <>
+            <RefreshCw size={12} className="text-yellow-500 animate-spin" />
+            <span className="text-[9px] font-black text-yellow-500 uppercase tracking-widest">Sincronizando</span>
+          </>
+        ) : isOnline ? (
+          <>
+            <Wifi size={12} className="text-emerald-500" />
+            <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Online</span>
+          </>
+        ) : (
+          <>
+            <WifiOff size={12} className="text-red-500" />
+            <span className="text-[9px] font-black text-red-500 uppercase tracking-widest">Offline</span>
+          </>
+        )}
+        {pendingSyncCount > 0 && (
+          <span className="ml-1 px-1.5 py-0.5 rounded bg-yellow-500/20 text-yellow-500 text-[9px] font-black" title="Ações pendentes">
+            {pendingSyncCount}
+          </span>
+        )}
       </div>
 
       {view === 'DASHBOARD' && (

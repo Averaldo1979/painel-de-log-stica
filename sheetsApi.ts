@@ -35,6 +35,13 @@ async function apiPost<T>(body: object): Promise<T> {
   const t0 = performance.now();
   console.log(`[DIAG API] POST`, body);
   let res;
+
+  if (!navigator.onLine) {
+    console.warn('[DIAG API] POST Offline (navigator.onLine=false), salvando na fila');
+    enqueueAction(body);
+    throw new Error('Offline');
+  }
+
   try {
     res = await fetch(API_URL, {
       method: 'POST',
@@ -58,6 +65,11 @@ async function apiPost<T>(body: object): Promise<T> {
 export async function processSyncQueue() {
   const queue = getSyncQueue();
   if (queue.length === 0) return;
+  if (!navigator.onLine) {
+    console.log('[DIAG API] Offline. Ignorando processamento da fila.');
+    return;
+  }
+  
   console.log(`[DIAG API] Processando ${queue.length} ações offline pendentes...`);
   for (const action of queue) {
     try {
@@ -128,6 +140,7 @@ export const usersApi = {
 // ---------------------------------------------------------------
 export async function pingApi(): Promise<boolean> {
   try {
+    if (!navigator.onLine) return false;
     if (!API_URL) {
       console.warn('[DIAG API] pingApi: VITE_SHEETS_API_URL não definida');
       return false;
