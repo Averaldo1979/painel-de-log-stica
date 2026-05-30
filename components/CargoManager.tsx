@@ -237,7 +237,7 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
               .trim();
 
             const team = teams.find(t => 
-              t.number.trim() === cleanedTeamNum
+              String(t.number).trim() === cleanedTeamNum
             );
 
             if (team) {
