@@ -209,25 +209,25 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
           if (values.length >= 6) {
             /** 
              * Ordem esperada no CSV:
-             * 0: Nº Carga (ID Logístico) — Ex: 1
-             * 1: Equipe                  — Ex: 401
-             * 2: Integrado               — Ex: Luziane Godoy Ribeiro av2
-             * 3: Cidade                  — Ex: Itapejara D' Oeste
-             * 4: Hora Apanha             — Ex: 15/5/26 0:30  OU  2026-05-15T00:30
-             * 5: Numero Aves             — Ex: 7020
-             * 6: Total Carga (Kg)        — Ex: 9266
-             * 7: Unidade                 — Ex: FRG-IO  (opcional)
+             * 0: Equipe                  — Ex: 401
+             * 1: Integrado               — Ex: Luziane Godoy Ribeiro av2
+             * 2: Cidade                  — Ex: Itapejara D' Oeste
+             * 3: Hora Apanha             — Ex: 15/5/26 0:30  OU  2026-05-15T00:30
+             * 4: Numero Aves             — Ex: 7020
+             * 5: Total Carga (Kg)        — Ex: 9266
+             * 6: Unidade                 — Ex: FRG-IO  (opcional)
+             * 7: Nº Carga (ID Logístico) — Ex: 1
              * 8: Hora Abate              — Ex: 15/5/26 5:10  OU  2026-05-15T05:10
              */
 
-            const cargoNum   = values[0] || (Math.floor(Math.random() * 90000) + 10000).toString();
-            const teamNum    = values[1] || '';
-            const integrated = values[2] || '';
-            const city       = values[3] || '';
-            const pickup     = parseCsvDate(values[4] || '');
-            const birds      = parseInt((values[5] || '').replace(/\D/g, '')) || 0;
-            const load       = parseInt((values[6] || '').replace(/\D/g, '')) || 0;
-            const unitName   = values[7] || '';
+            const teamNum    = values[0] || '';
+            const integrated = values[1] || '';
+            const city       = values[2] || '';
+            const pickup     = parseCsvDate(values[3] || '');
+            const birds      = parseInt((values[4] || '').replace(/\D/g, '')) || 0;
+            const load       = parseInt((values[5] || '').replace(/\D/g, '')) || 0;
+            const unitName   = values[6] || '';
+            const cargoNum   = values[7] || (Math.floor(Math.random() * 90000) + 10000).toString();
             const slaughter  = values[8] ? parseCsvDate(values[8]) : pickup;
 
             // Busca a equipe exata, limpando o texto caso o usuário cole "EQP 401 (FRG-IO)" do dropdown
@@ -284,8 +284,8 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
   };
 
   const downloadTemplate = () => {
-    const header = "Nº Carga (ID Logístico);Equipe;Integrado;Cidade;Hora Apanha;Numero Aves;Total Carga;Unidade;Hora Abate\n";
-    const example = "1;401;Produtor Exemplo;Cidade Exemplo;15/05/2026 08:00;5000;12500;UNIDADE A;15/05/2026 14:30";
+    const header = "Equipe;Integrado;Cidade;Hora Apanha;Numero Aves;Total Carga;Unidade;Numero Carga;Hora Abate\n";
+    const example = "401;Produtor Exemplo;Cidade Exemplo;15/05/2026 08:00;5000;12500;UNIDADE A;1;15/05/2026 14:30";
     const blob = new Blob(["\uFEFF" + header + example], { type: 'text/csv;charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');

@@ -9,7 +9,7 @@ import { UnitManager } from './components/UnitManager';
 import { UsersScreen } from './components/UsersScreen';
 import { LoginScreen } from './components/LoginScreen';
 import { Team, Cargo, ViewMode, CargoStatus, Unit, User } from './types';
-import { Database, WifiOff, Wifi } from 'lucide-react';
+import { Database, WifiOff, Wifi, RefreshCw } from 'lucide-react';
 import { unitsApi, teamsApi, cargosApi, usersApi, pingApi, processSyncQueue } from './sheetsApi';
 import { getSyncQueue } from './offlineQueue';
 import { useRealtimeSync } from './useRealtimeSync';
