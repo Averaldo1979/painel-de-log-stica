@@ -309,7 +309,7 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 min-[1900px]:grid-cols-6 gap-x-4 gap-y-10 pt-4 pb-8 px-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-10 pt-4 pb-8 px-1">
             {filteredAndSortedCargos.map((cargo) => {
               const pickup = formatDateTime(cargo.pickupTime);
               const slaughter = formatDateTime(cargo.slaughterTime);
