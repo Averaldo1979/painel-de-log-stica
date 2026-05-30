@@ -108,7 +108,7 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
   const getStatusLabel = (status: string) => {
     const s = String(status).toUpperCase();
     if (s.includes('ATRASADO')) return 'Atrasado';
-    if (s.includes('DESLOCAMENTO') || s.includes('TRÂNSITO') || s.includes('TRANSITO')) return 'Em deslocamento';
+    if (s.includes('DESLOCAMENTO') || s.includes('TRÂNSITO') || s.includes('TRANSITO')) return 'Em Trânsito';
     if (s.includes('CARREGANDO')) return 'Carregando';
     if (s.includes('FINALIZADO')) return 'Finalizado';
     return 'Programado';
@@ -502,8 +502,8 @@ export const CargoManager: React.FC<CargoManagerProps> = ({
                           <div className="text-yellow-500 font-black text-xl airport-font">#{cargo.cargoNumber}</div>
                           <div className="font-bold text-white text-sm uppercase tracking-tight">EQP {team?.number || '---'}</div>
                         </div>
-                        <div className="text-right">
-                          <span className={`px-2 py-1 rounded border text-[9px] font-black uppercase tracking-widest ${getStatusStyle(effectiveStatus)}`}>
+                        <div className="text-right max-w-[50%]">
+                          <span className={`px-2 py-1 rounded border text-[9px] font-black uppercase tracking-widest block text-center break-words leading-tight ${getStatusStyle(effectiveStatus)}`}>
                             {getStatusLabel(effectiveStatus)}
                           </span>
                         </div>

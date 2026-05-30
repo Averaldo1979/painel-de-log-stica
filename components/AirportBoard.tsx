@@ -144,7 +144,7 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
   const getStatusLabel = (status: string) => {
     const s = String(status).toUpperCase();
     if (s.includes('ATRASADO')) return 'Atrasado';
-    if (s.includes('DESLOCAMENTO') || s.includes('TRÂNSITO') || s.includes('TRANSITO')) return 'Em deslocamento';
+    if (s.includes('DESLOCAMENTO') || s.includes('TRÂNSITO') || s.includes('TRANSITO')) return 'Em Trânsito';
     if (s.includes('CARREGANDO')) return 'Carregando';
     if (s.includes('FINALIZADO')) return 'Finalizado';
     return 'Programado';
@@ -341,8 +341,8 @@ export const AirportBoard: React.FC<AirportBoardProps> = ({
                               {getTeamLabel(cargo.teamId)}
                             </div>
                           </div>
-                          <div className="text-right shrink-0">
-                            <span className={`px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-black uppercase tracking-wider block ${getStatusStyle(effectiveStatus)}`}>
+                          <div className="text-right shrink-0 max-w-[50%]">
+                            <span className={`px-2 py-1 rounded text-[8px] sm:text-[9px] font-black uppercase tracking-wider block text-center break-words leading-tight ${getStatusStyle(effectiveStatus)}`}>
                               {getStatusLabel(effectiveStatus)}
                             </span>
                           </div>
